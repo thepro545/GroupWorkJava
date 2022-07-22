@@ -26,7 +26,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private static final String START_CMD = "/start";
 
-    private static final String GREETING_TEXT = "Приветствую, друг! Чтобы найти то, что тебе нужно - нажми на нужную кнопку";
+    private static final String GREETING_TEXT = ", Приветствую! Чтобы найти то, что тебе нужно - нажми на нужную кнопку";
 
     private static final String INVALID_ID_NOTIFY_OR_CMD = "Такой команды не существует";
 
