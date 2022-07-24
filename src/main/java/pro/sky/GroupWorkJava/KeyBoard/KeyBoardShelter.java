@@ -1,6 +1,7 @@
 package pro.sky.GroupWorkJava.KeyBoard;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.request.Keyboard;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
@@ -17,7 +18,9 @@ public class KeyBoardShelter {
 
     @Autowired
     private TelegramBot telegramBot;
+
     private org.slf4j.Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
+
 
     //Основеное Меню
     public void sendMenu(long chatId) {
@@ -27,7 +30,8 @@ public class KeyBoardShelter {
                 new KeyboardButton("Узнать информацию о приюте"));
         replyKeyboardMarkup.addRow(new KeyboardButton("Как взять питомца из приюта"),
                 new KeyboardButton("Прислать отчет о питомце"));
-        replyKeyboardMarkup.addRow(new KeyboardButton("Позвать волонтера"));
+        replyKeyboardMarkup.addRow(new KeyboardButton("Позвать волонтера").requestContact(true));
+
         replyKeyboardMarkup.resizeKeyboard(true);
         replyKeyboardMarkup.oneTimeKeyboard(false);
         replyKeyboardMarkup.selective(false);

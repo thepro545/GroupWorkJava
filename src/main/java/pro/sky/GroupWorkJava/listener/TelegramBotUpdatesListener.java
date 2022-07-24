@@ -2,23 +2,18 @@ package pro.sky.GroupWorkJava.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
-import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
 
-
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
@@ -31,8 +26,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private static final String INVALID_ID_NOTIFY_OR_CMD = "Такой команды не существует";
 
+    @Autowired
     private KeyBoardShelter keyBoardShelter;
 
+    @Autowired
     private TelegramBot telegramBot;
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot) {
@@ -54,6 +51,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             long chatId = update.message().chat().id();
 
             if (textUpdate.equals(START_CMD)) {
+//                sendMessage(chatId, nameUser + GREETING_TEXT);
                 keyBoardShelter.sendMenu(chatId);
             } else if (textUpdate.equals("Как взять питомца из приюта")) {
                 keyBoardShelter.sendMenuTakeAnimal(chatId);
@@ -62,7 +60,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             } else if (update.message().text().equals("Вернуться в меню")) {
                 keyBoardShelter.sendMenu(chatId);
             }
-
 
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
