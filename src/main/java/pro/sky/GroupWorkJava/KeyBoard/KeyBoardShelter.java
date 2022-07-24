@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.listener.TelegramBotUpdatesListener;
+import com.vdurmont.emoji.EmojiParser;
 
 
 @Service
@@ -25,8 +26,9 @@ public class KeyBoardShelter {
     //Основеное Меню
     public void sendMenu(long chatId) {
         logger.info("Method sendMessage has been run: {}, {}", chatId, "Вызвано основное меню ");
+        String emoji_kissing = EmojiParser.parseToUnicode(":pig:");
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new KeyboardButton("Информация о возможностях бота"),
+                new KeyboardButton(emoji_kissing+ "Информация о возможностях бота"),
                 new KeyboardButton("Узнать информацию о приюте"));
         replyKeyboardMarkup.addRow(new KeyboardButton("Как взять питомца из приюта"),
                 new KeyboardButton("Прислать отчет о питомце"));
