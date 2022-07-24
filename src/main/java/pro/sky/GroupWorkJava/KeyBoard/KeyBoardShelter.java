@@ -35,7 +35,7 @@ public class KeyBoardShelter {
         replyKeyboardMarkup.resizeKeyboard(true);
         replyKeyboardMarkup.oneTimeKeyboard(false);
         replyKeyboardMarkup.selective(false);
-        SendMessage request = new SendMessage(chatId, "Добро пожаловать, в наш приют")
+        SendMessage request = new SendMessage(chatId, "Главное меню")
                 .replyMarkup(replyKeyboardMarkup)
                 .parseMode(ParseMode.HTML)
                 .disableWebPagePreview(true);
