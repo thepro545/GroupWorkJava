@@ -54,7 +54,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             if (textUpdate.equals(START_CMD)) {
                 keyBoardShelter.sendMenu(chatId);
+            } else if (textUpdate.equals("Как взять питомца из приюта")){
+                keyBoardShelter.sendMenuTakeAnimal(chatId);
+            } else if (textUpdate.equals("Узнать информацию о приюте")){
+                keyBoardShelter.sendMenuInfoShelter(chatId);
             }
+
 
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
