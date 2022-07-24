@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
 
 
 import javax.annotation.PostConstruct;
@@ -29,6 +30,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private static final String GREETING_TEXT = ", Приветствую! Чтобы найти то, что тебе нужно - нажми на нужную кнопку";
 
     private static final String INVALID_ID_NOTIFY_OR_CMD = "Такой команды не существует";
+
+    private KeyBoardShelter keyBoardShelter;
 
     private TelegramBot telegramBot;
 
@@ -50,7 +53,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             long chatId = update.message().chat().id();
 
             if (textUpdate.equals(START_CMD)) {
-                sendMessage(chatId, nameUser + GREETING_TEXT);
+                keyBoardShelter.sendMenu(chatId);
             }
 
         });
