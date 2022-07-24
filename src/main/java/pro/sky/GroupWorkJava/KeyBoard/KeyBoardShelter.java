@@ -30,7 +30,7 @@ public class KeyBoardShelter {
                 new KeyboardButton("Узнать информацию о приюте"));
         replyKeyboardMarkup.addRow(new KeyboardButton("Как взять питомца из приюта"),
                 new KeyboardButton("Прислать отчет о питомце"));
-        replyKeyboardMarkup.addRow(new KeyboardButton("Позвать волонтера").requestContact(true));
+        replyKeyboardMarkup.addRow(new KeyboardButton("Позвать волонтера"));
 
         replyKeyboardMarkup.resizeKeyboard(true);
         replyKeyboardMarkup.oneTimeKeyboard(false);
