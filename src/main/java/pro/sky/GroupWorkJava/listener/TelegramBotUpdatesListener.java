@@ -38,6 +38,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     public TelegramBotUpdatesListener(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
     }
+
     @PostConstruct
     public void init() {
         telegramBot.setUpdatesListener(this);
@@ -54,10 +55,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             if (textUpdate.equals(START_CMD)) {
                 keyBoardShelter.sendMenu(chatId);
-            } else if (textUpdate.equals("Как взять питомца из приюта")){
+            } else if (textUpdate.equals("Как взять питомца из приюта")) {
                 keyBoardShelter.sendMenuTakeAnimal(chatId);
-            } else if (textUpdate.equals("Узнать информацию о приюте")){
+            } else if (textUpdate.equals("Узнать информацию о приюте")) {
                 keyBoardShelter.sendMenuInfoShelter(chatId);
+            } else if (update.message().text().equals("Вернуться в меню")) {
+                keyBoardShelter.sendMenu(chatId);
             }
 
 
