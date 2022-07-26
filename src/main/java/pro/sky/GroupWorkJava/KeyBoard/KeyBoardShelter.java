@@ -23,7 +23,10 @@ public class KeyBoardShelter {
     private org.slf4j.Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
 
-    //Основеное Меню
+    /**
+     * Основеное Меню
+     * @param chatId
+     */
     public void sendMenu(long chatId) {
         logger.info("Method sendMessage has been run: {}, {}", chatId, "Вызвано основное меню ");
         String emoji_kissing = EmojiParser.parseToUnicode(":pig:");
@@ -50,7 +53,10 @@ public class KeyBoardShelter {
         }
     }
 
-    //Меню информации о приюте
+    /**
+     * Меню информации о приюте
+     * @param chatId
+     */
     public void sendMenuInfoShelter(long chatId) {
         logger.info("Method sendMenuInfoShelter has been run: {}, {}", chatId, "Вызвали Информация о приюте");
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(new KeyboardButton("Кидает на статью"),
@@ -73,7 +79,10 @@ public class KeyBoardShelter {
         }
     }
 
-    //Меню как взять питомца
+    /**
+     * Меню как взять питомца
+     * @param chatId
+     */
     public void sendMenuTakeAnimal(long chatId) {
         logger.info("Method sendMenuTakeAnimal has been run: {}, {}", chatId, "вызвали Как взять питомца из приюта");
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(new KeyboardButton("Кидает на статью"),
