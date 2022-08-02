@@ -132,7 +132,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 //        sendMessage(task.getChatId(), task.getNotificationMessage());
 //    }
 
-
     //отправка сообщений в ТГ Бот
     public void sendMessage(long chatId, String text) {
         SendMessage message = new SendMessage(chatId, text);
@@ -144,17 +143,5 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         sendMessage.replyToMessageId(message.messageId());
         SendResponse sendResponse = telegramBot.execute(sendMessage);
     }
-//    /**
-//     * Создание настроек из полученного пользователем сообщения
-//     * @param text текст сообщения
-//     * @throws IllegalArgumentException пробрасывается, если сообщение пользователя не соответствует формату
-//     */
-//    private Settings createSettings(String text) throws IllegalArgumentException {
-//        //отсекаем файлы, стикеры, гифки и прочий мусор
-//        if (text == null) {
-//            throw new IllegalArgumentException("Сообщение не является текстом");
-//        }
-//        //создаём из сообщения пользователя 3 числа-настройки (min, max, listCount) либо пробрасываем исключение о несоответствии сообщения требуемому формату
-//        return new Settings(min, max, listCount);
-//    }
+
 }
