@@ -2,6 +2,7 @@ package pro.sky.GroupWorkJava.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -13,6 +14,7 @@ import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Locale;
 
 
 @Service
@@ -48,25 +50,81 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             // Process your updates here
             String nameUser = update.message().chat().firstName();
             String textUpdate = update.message().text();
+            Integer messageId = update.message().messageId();
+            Long VolonterChat = 440504531L;
+//            String getPhone = update.message().contact().phoneNumber();
+            String phone = "";
+
+//            phone = update.message().contact().phoneNumber();
+//            if (phone != null) {
+//
+//                sendMessage(VolonterChat, "Тут перезвонить надо " + phone + " " + nameUser);
+//                System.out.println(phone);
+//            }
+
+            Integer message123 = update.message().forwardFromMessageId();
             long chatId = update.message().chat().id();
 
-            if (textUpdate.equals(START_CMD)) {
-                sendMessage(chatId, nameUser + GREETING_TEXT);
-                keyBoardShelter.sendMenu(chatId);
-            } else if (textUpdate.equals("Как взять питомца из приюта")) {
-                keyBoardShelter.sendMenuTakeAnimal(chatId);
-            } else if (textUpdate.equals("Узнать информацию о приюте")) {
-                keyBoardShelter.sendMenuInfoShelter(chatId);
-            } else if (update.message().text().equals("Вернуться в меню")) {
-                keyBoardShelter.sendMenu(chatId);
+
+            try {
+                switch (textUpdate) {
+                    case START_CMD:
+                        sendMessage(chatId, nameUser + GREETING_TEXT);
+                        keyBoardShelter.sendMenu(chatId);
+                        break;
+                    case "Как взять питомца из приюта":
+                        keyBoardShelter.sendMenuTakeAnimal(chatId);
+                        break;
+                    case "Узнать информацию о приюте":
+                        keyBoardShelter.sendMenuInfoShelter(chatId);
+                        break;
+                    case "Вернуться в меню":
+                        keyBoardShelter.sendMenu(chatId);
+                        break;
+                    case "Привет":
+                        if (messageId != null) {
+                            sendReplyMessage(chatId, "И тебе привет", messageId);
+                            break;
+                        }
+//                    case "Позвать волонтера":
+//                            sendReplyMessage(VolonterChat, "Тут перезвонить надо " + phone, messageId);
+//                            break;
+                    case "Contact":
+                        if (messageId != null) {
+                            sendReplyMessage(chatId, "123", messageId);
+                            break;
+                        }
+                    case "null":
+                        System.out.println("Нельзя");
+                        sendMessage(chatId, "Я не знаю такой команды(NULL)");
+                        break;
+                    case "":
+                        System.out.println("Нельзя");
+                        sendMessage(chatId, "Пустое сообщение");
+                        break;
+
+                    default:
+//                        if (messageId != null) {
+//                        message.replyToMessage().text();
+//                        sendMsg(message, "Скоро вам ответят");
+                            sendReplyMessage(chatId, "Я не знаю такой команды", messageId);
+//                        }
+                        break;
+
+                }
+            } catch (NullPointerException e) {
+                sendReplyMessage(chatId, "Ошибка", messageId);
+                System.out.println("Ошибка");
             }
 
         });
+
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
-    public void sendMessage(Long chatId, String messageText) {
+    public void sendReplyMessage(Long chatId, String messageText, Integer messageId) {
         SendMessage sendMessage = new SendMessage(chatId, messageText);
+        sendMessage.replyToMessageId(messageId);
         telegramBot.execute(sendMessage);
     }
 
@@ -74,11 +132,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 //        sendMessage(task.getChatId(), task.getNotificationMessage());
 //    }
 
-
     //отправка сообщений в ТГ Бот
     public void sendMessage(long chatId, String text) {
         SendMessage message = new SendMessage(chatId, text);
         SendResponse sendResponse = telegramBot.execute(message);
+    }
+
+    public void sendMsg(Message message, String text) {
+        SendMessage sendMessage = new SendMessage(message, text);
+        sendMessage.replyToMessageId(message.messageId());
+        SendResponse sendResponse = telegramBot.execute(sendMessage);
     }
 
 }
