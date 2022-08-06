@@ -80,8 +80,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 personRepository.save(new Person(firstName, phone, chatId));
                 return;
             }
-
-//            phone = update.message().contact().phoneNumber();
+ //            phone = update.message().contact().phoneNumber();
 //            if (phone != null) {
 //
 //                sendMessage(VolonterChat, "Тут перезвонить надо " + phone + " " + nameUser);
