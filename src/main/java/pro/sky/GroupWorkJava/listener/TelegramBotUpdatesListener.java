@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
+import pro.sky.GroupWorkJava.model.Person;
+import pro.sky.GroupWorkJava.repository.PersonRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Locale;
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
 
+
     private static final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
     private static final String START_CMD = "/start";
@@ -27,6 +30,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private static final String GREETING_TEXT = ", Приветствую! Чтобы найти то, что тебе нужно - нажми на нужную кнопку";
 
     private static final String INVALID_ID_NOTIFY_OR_CMD = "Такой команды не существует";
+
+    @Autowired
+    private PersonRepository personRepository;
 
     @Autowired
     private KeyBoardShelter keyBoardShelter;
@@ -53,8 +59,26 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             Integer messageId = update.message().messageId();
             Long VolonterChat = 440504531L;
 //            String getPhone = update.message().contact().phoneNumber();
-            String phone = "";
 
+            if (update.message().contact().phoneNumber() != null) {
+                String firstName = update.message().contact().firstName();
+                String lastName = update.message().contact().lastName();
+                String phone = update.message().contact().phoneNumber();
+                long chatId = update.message().chat().id();
+                //long chatId1 = personRepository.findAll().sort(s ->s);
+//                if (personRepository.) {
+//                    sendMessage(chatId, "Вы уже в базе");
+//                    return;
+//                }
+                if (lastName != null) {
+                    String name = firstName + " " + lastName;
+                    personRepository.save(new Person(name, phone, chatId));
+                    return;
+                }
+                personRepository.save(new Person(firstName, phone, chatId));
+
+                return;
+            }
 //            phone = update.message().contact().phoneNumber();
 //            if (phone != null) {
 //
@@ -107,7 +131,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 //                        if (messageId != null) {
 //                        message.replyToMessage().text();
 //                        sendMsg(message, "Скоро вам ответят");
-                            sendReplyMessage(chatId, "Я не знаю такой команды", messageId);
+                        sendReplyMessage(chatId, "Я не знаю такой команды", messageId);
 //                        }
                         break;
 
