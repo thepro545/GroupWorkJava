@@ -109,5 +109,7 @@ public class Person {
         this.address = address;
     }
 
-
+    public Long getChatId() {
+        return chatId;
+    }
 }
