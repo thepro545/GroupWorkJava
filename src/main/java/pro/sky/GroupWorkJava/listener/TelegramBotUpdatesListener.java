@@ -17,6 +17,7 @@ import pro.sky.GroupWorkJava.repository.PersonRepository;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -58,25 +59,25 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
             Long VolonterChat = 440504531L;
-//            String getPhone = update.message().contact().phoneNumber();
+
 
             if (update.message().contact().phoneNumber() != null) {
                 String firstName = update.message().contact().firstName();
                 String lastName = update.message().contact().lastName();
                 String phone = update.message().contact().phoneNumber();
                 long chatId = update.message().chat().id();
-                //long chatId1 = personRepository.findAll().sort(s ->s);
-//                if (personRepository.) {
-//                    sendMessage(chatId, "Вы уже в базе");
-//                    return;
-//                }
+                var sortChatId = personRepository.findAll().stream().filter(i -> i.getChatId() == chatId)
+                        .collect(Collectors.toList());
+                if (!sortChatId.isEmpty()) {
+                    sendMessage(chatId, "Вы уже в базе");
+                    return;
+                }
                 if (lastName != null) {
                     String name = firstName + " " + lastName;
                     personRepository.save(new Person(name, phone, chatId));
                     return;
                 }
                 personRepository.save(new Person(firstName, phone, chatId));
-
                 return;
             }
 //            phone = update.message().contact().phoneNumber();
