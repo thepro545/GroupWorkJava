@@ -59,38 +59,35 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
             Long VolonterChat = 440504531L;
+            String userName = update.message().chat().username();
 
-
-            if (update.message().contact().phoneNumber() != null) {
-                String firstName = update.message().contact().firstName();
-                String lastName = update.message().contact().lastName();
-                String phone = update.message().contact().phoneNumber();
-                long chatId = update.message().chat().id();
-                var sortChatId = personRepository.findAll().stream().filter(i -> i.getChatId() == chatId)
-                        .collect(Collectors.toList());
-                if (!sortChatId.isEmpty()) {
-                    sendMessage(chatId, "Вы уже в базе");
+            // Добавление имени и телефона в базу
+            try {
+                if (update.message().contact().phoneNumber() != null) {
+                    String firstName = update.message().contact().firstName();
+                    String lastName = update.message().contact().lastName();
+                    String phone = update.message().contact().phoneNumber();
+                    long chatId = update.message().chat().id();
+                    var sortChatId = personRepository.findAll().stream().filter(i -> i.getChatId() == chatId)
+                            .collect(Collectors.toList());
+                    if (!sortChatId.isEmpty()) {
+                        sendMessage(chatId, "Вы уже в базе");
+                        return;
+                    }
+                    if (lastName != null) {
+                        String name = firstName + " " + lastName;
+                        personRepository.save(new Person(name, phone, chatId));
+                        return;
+                    }
+                    personRepository.save(new Person(firstName, phone, chatId));
                     return;
                 }
-                if (lastName != null) {
-                    String name = firstName + " " + lastName;
-                    personRepository.save(new Person(name, phone, chatId));
-                    return;
-                }
-                personRepository.save(new Person(firstName, phone, chatId));
-                return;
+            } catch (NullPointerException e){
+                System.out.println("Ошибка phone");
             }
 
- //            phone = update.message().contact().phoneNumber();
-//            if (phone != null) {
-//
-//                sendMessage(VolonterChat, "Тут перезвонить надо " + phone + " " + nameUser);
-//                System.out.println(phone);
-//            }
-
-            Integer message123 = update.message().forwardFromMessageId();
+//            Integer message123 = update.message().forwardFromMessageId();
             long chatId = update.message().chat().id();
-
 
             try {
                 switch (textUpdate) {
@@ -110,6 +107,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     case "Привет":
                         if (messageId != null) {
                             sendReplyMessage(chatId, "И тебе привет", messageId);
+                            keyBoardShelter.checkInline(chatId);
                             break;
                         }
 //                    case "Позвать волонтера":
@@ -128,13 +126,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         System.out.println("Нельзя");
                         sendMessage(chatId, "Пустое сообщение");
                         break;
-
                     default:
-//                        if (messageId != null) {
-//                        message.replyToMessage().text();
-//                        sendMsg(message, "Скоро вам ответят");
                         sendReplyMessage(chatId, "Я не знаю такой команды", messageId);
-//                        }
                         break;
 
                 }
@@ -142,6 +135,27 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 sendReplyMessage(chatId, "Ошибка", messageId);
                 System.out.println("Ошибка");
             }
+
+            //Принять отчет
+//            public getReport(){
+//            def handler_file(message):
+//            from pathlib import Path
+//            Path(f'files/{message.chat.id}/').mkdir(parents=True, exist_ok=True)
+//            if (update.message().photo()!=null){
+// 111               telegramBot.getFileContent(File file)
+// 111           }
+//            file_info = bot.get_file(message.photo[len(message.photo) - 1].file_id)
+//            downloaded_file = bot.download_file(file_info.file_path)
+//            src = f'files/{message.chat.id}/' + file_info.file_path.replace('photos/', '')
+//            with open(src, 'wb') as new_file:
+//            new_file.write(downloaded_file)
+//
+//            elif message.content_type == 'document':
+//            file_info = bot.get_file(message.document.file_id)
+//            downloaded_file = bot.download_file(file_info.file_path)
+//            src = f'files/{message.chat.id}/' + message.document.file_name
+//            with open(src, 'wb') as new_file:
+//            new_file.write(downloaded_file)
 
         });
 
@@ -164,10 +178,5 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         SendResponse sendResponse = telegramBot.execute(message);
     }
 
-    public void sendMsg(Message message, String text) {
-        SendMessage sendMessage = new SendMessage(message, text);
-        sendMessage.replyToMessageId(message.messageId());
-        SendResponse sendResponse = telegramBot.execute(sendMessage);
-    }
 
 }
