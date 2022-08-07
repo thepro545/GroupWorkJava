@@ -30,8 +30,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private static final String GREETING_TEXT = ", Приветствую! Чтобы найти то, что тебе нужно - нажми на нужную кнопку";
 
-    private static final String INVALID_ID_NOTIFY_OR_CMD = "Такой команды не существует";
+    private static final String infoAboutShelter = "Наш сайт с информацией \nhttps://google.com \n" +
+            "Контактные данные \nhttps://yandex.ru\n" +
+            "Общие рекомендации \nhttps://ru.wikipedia.org\n" +
+            "";
+    private static final String infoAboutDogs = "Правила знакомства с животным \nhttps://google.com \n" +
+            "Список документов \nhttps://yandex.ru\n" +
+            "Список рекомендаций \nhttps://ru.wikipedia.org\n" +
+            "Советы кинолога \nhttps://ru.wikipedia.org\n" +
+            "Прочая информация \nhttps://google.com\n" +
+            "";
 
+    private static final String infoContactsVolonter = "Контактные данные волонтера  \n@thepro545 \n" +
+            "Телефон - +7 999 999 99 99 \n";
     @Autowired
     private PersonRepository personRepository;
 
@@ -58,39 +69,30 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String nameUser = update.message().chat().firstName();
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
-            Long VolonterChat = 440504531L;
 
-
-            if (update.message().contact().phoneNumber() != null) {
+            // Добавление имени и телефона в базу через кнопку оставить контакты
+            if (update.message().contact() != null) {
                 String firstName = update.message().contact().firstName();
                 String lastName = update.message().contact().lastName();
                 String phone = update.message().contact().phoneNumber();
-                long chatId = update.message().chat().id();
-                var sortChatId = personRepository.findAll().stream().filter(i -> i.getChatId() == chatId)
+                long finalChatId = update.message().chat().id();
+                var sortChatId = personRepository.findAll().stream().filter(i -> i.getChatId() == finalChatId)
                         .collect(Collectors.toList());
                 if (!sortChatId.isEmpty()) {
-                    sendMessage(chatId, "Вы уже в базе");
+                    sendMessage(finalChatId, "Вы уже в базе");
                     return;
                 }
                 if (lastName != null) {
                     String name = firstName + " " + lastName;
-                    personRepository.save(new Person(name, phone, chatId));
+                    personRepository.save(new Person(name, phone, finalChatId));
+                    sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
                     return;
                 }
-                personRepository.save(new Person(firstName, phone, chatId));
+                personRepository.save(new Person(firstName, phone, finalChatId));
+                sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
                 return;
             }
-
- //            phone = update.message().contact().phoneNumber();
-//            if (phone != null) {
-//
-//                sendMessage(VolonterChat, "Тут перезвонить надо " + phone + " " + nameUser);
-//                System.out.println(phone);
-//            }
-
-            Integer message123 = update.message().forwardFromMessageId();
             long chatId = update.message().chat().id();
-
 
             try {
                 switch (textUpdate) {
@@ -104,22 +106,26 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     case "Узнать информацию о приюте":
                         keyBoardShelter.sendMenuInfoShelter(chatId);
                         break;
+                    case "Информация о приюте":
+                        sendMessage(chatId, infoAboutShelter);
+                        break;
+                    case "Советы и рекомендации":
+                        sendMessage(chatId, infoAboutDogs);
+                        break;
+
                     case "Вернуться в меню":
                         keyBoardShelter.sendMenu(chatId);
                         break;
                     case "Привет":
                         if (messageId != null) {
                             sendReplyMessage(chatId, "И тебе привет", messageId);
+                            keyBoardShelter.checkInline(chatId);
                             break;
                         }
-//                    case "Позвать волонтера":
-//                            sendReplyMessage(VolonterChat, "Тут перезвонить надо " + phone, messageId);
-//                            break;
-                    case "Contact":
-                        if (messageId != null) {
-                            sendReplyMessage(chatId, "123", messageId);
-                            break;
-                        }
+                    case "Позвать волонтера":
+                        sendMessage(chatId, infoContactsVolonter);
+                        break;
+
                     case "null":
                         System.out.println("Нельзя");
                         sendMessage(chatId, "Я не знаю такой команды(NULL)");
@@ -128,13 +134,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         System.out.println("Нельзя");
                         sendMessage(chatId, "Пустое сообщение");
                         break;
-
                     default:
-//                        if (messageId != null) {
-//                        message.replyToMessage().text();
-//                        sendMsg(message, "Скоро вам ответят");
                         sendReplyMessage(chatId, "Я не знаю такой команды", messageId);
-//                        }
                         break;
 
                 }
@@ -163,11 +164,4 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         SendMessage message = new SendMessage(chatId, text);
         SendResponse sendResponse = telegramBot.execute(message);
     }
-
-    public void sendMsg(Message message, String text) {
-        SendMessage sendMessage = new SendMessage(message, text);
-        sendMessage.replyToMessageId(message.messageId());
-        SendResponse sendResponse = telegramBot.execute(sendMessage);
-    }
-
 }
