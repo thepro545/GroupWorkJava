@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.listener.TelegramBotUpdatesListener;
 import com.vdurmont.emoji.EmojiParser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 public class KeyBoardShelter {
@@ -18,6 +21,7 @@ public class KeyBoardShelter {
     private TelegramBot telegramBot;
 
     private org.slf4j.Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
+
 
 
     /**
@@ -45,19 +49,18 @@ public class KeyBoardShelter {
      */
     public void sendMenuInfoShelter(long chatId) {
         logger.info("Method sendMenuInfoShelter has been run: {}, {}", chatId, "Вызвали Информация о приюте");
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(new KeyboardButton("Кидает на статью"),
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(new KeyboardButton("Информация о приюте"),
                 new KeyboardButton("Оставить контактные данные").requestContact(true));
         replyKeyboardMarkup.addRow(new KeyboardButton("Позвать волонтера"),
                 new KeyboardButton("Вернуться в меню"));
-        returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Информацию о приюте");
+        returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Информация о приюте");
     }
 
     public void checkInline(Long chatId) {
-        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-                new InlineKeyboardButton("url").url("www.google.com"),
-                new InlineKeyboardButton("callback_data").callbackData("callback_data"),
-                new InlineKeyboardButton("Switch!").switchInlineQuery("Бот, которые поможет взять питомца"));
-        returnResponse(inlineKeyboard, chatId, "TEXT TYT");
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(
+                new InlineKeyboardButton("Тут гугл").url("www.google.com"),
+                new InlineKeyboardButton("Расскажите о нас!").switchInlineQuery("Бот, которые поможет взять питомца"));
+        returnResponse(inlineKeyboardMarkup, chatId, "TEXT TYT");
     }
 
     public void returnResponse(InlineKeyboardMarkup o, Long chatId, String text) {
@@ -82,8 +85,8 @@ public class KeyBoardShelter {
     public void sendMenuTakeAnimal(long chatId) {
         logger.info("Method sendMenuTakeAnimal has been run: {}, {}", chatId, "вызвали Как взять питомца из приюта");
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new KeyboardButton("Кидает на статью"),
-                new KeyboardButton("Оставить контактные данные"));
+                new KeyboardButton("Советы и рекомендации"),
+                new KeyboardButton("Оставить контактные данные").requestContact(true));
         replyKeyboardMarkup.addRow(new KeyboardButton("Позвать волонтера"),
                 new KeyboardButton("Вернуться в меню"));
         returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Отчет");
