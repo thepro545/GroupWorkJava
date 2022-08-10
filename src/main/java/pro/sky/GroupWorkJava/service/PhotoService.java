@@ -37,8 +37,10 @@ public class PhotoService {
         this.reportRepository = reportRepository;
     }
 
-    public void uploadPhoto(Long personId, byte[] pictureFile, File file, String caption) throws IOException { //, String caption
-        Path filePath = Path.of(photoDir, personId + "_" + "photo" + "." + getExtensions(Objects.requireNonNull(file.filePath())));
+    public void uploadPhoto(Long personId, byte[] pictureFile, File file,
+                            String caption, String ration, String health, String habits) throws IOException { //, String caption
+        Path filePath = Path.of(photoDir, personId + "_" + "photo" + "." +
+                getExtensions(Objects.requireNonNull(file.filePath())));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         ReportData photo = findPhoto(personId);
@@ -47,6 +49,9 @@ public class PhotoService {
         photo.setCaption(caption);
         photo.setData(pictureFile);
         photo.setChatId(personId);
+        photo.setRation(ration);
+        photo.setHealth(health);
+        photo.setHabits(habits);
         reportRepository.save(photo);
 
     }

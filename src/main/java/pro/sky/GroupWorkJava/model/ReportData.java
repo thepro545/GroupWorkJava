@@ -29,7 +29,6 @@ public class ReportData {
     private long fileSize;
 
 
-
     public ReportData(Long chatId, String photo, String caption, byte[] data) {
         this.chatId = chatId;
         this.photo = photo;
@@ -38,6 +37,17 @@ public class ReportData {
     }
 
     public ReportData(String ration, String health, String habits) {
+        this.ration = ration;
+        this.health = health;
+        this.habits = habits;
+    }
+
+    public ReportData(Long chatId, String photo, String caption, byte[] data,
+                      String ration, String health, String habits) {
+        this.chatId = chatId;
+        this.photo = photo;
+        this.caption = caption;
+        this.data = data;
         this.ration = ration;
         this.health = health;
         this.habits = habits;
@@ -71,6 +81,7 @@ public class ReportData {
     public String getCaption() {
         return caption;
     }
+
     public void setCaption(String caption) {
         this.caption = caption;
     }

@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
 import pro.sky.GroupWorkJava.model.Person;
 
+import pro.sky.GroupWorkJava.model.ReportData;
 import pro.sky.GroupWorkJava.repository.PersonRepository;
+import pro.sky.GroupWorkJava.repository.ReportRepository;
 import pro.sky.GroupWorkJava.service.PhotoService;
 
 import javax.annotation.PostConstruct;
@@ -64,8 +66,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             "(Поведение:)(\\s)([\\W]+)(;)";
 
     @Autowired
+    private ReportRepository reportRepository;
+    @Autowired
     private PersonRepository personRepository;
-
     @Autowired
     private KeyBoardShelter keyBoardShelter;
     @Autowired
@@ -93,13 +96,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             //Обработка отчета ( Фото и текст)
             if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
+
+                //         savePhoto(update);
                 getReport(update);
-                savePhoto(update);
             }
             // Добавление имени и телефона в базу через кнопку оставить контакты
             if (update.message() != null && update.message().contact() != null) {
                 shareContact(update);
-
             }
 
             long chatId = update.message().chat().id();
@@ -214,27 +217,22 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String ration = matcher.group(3);
             String health = matcher.group(7);
             String habits = matcher.group(11);
-            System.out.println(ration);
-            System.out.println(habits);
-            System.out.println(health);
+
+            GetFile getFileRequest = new GetFile(update.message().photo()[0].fileId());
+            GetFileResponse getFileResponse = telegramBot.execute(getFileRequest);
+            try {
+                File file = getFileResponse.file();
+                file.fileSize();
+                byte[] fileContent = telegramBot.getFileContent(file);
+                photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
+                        ration, health, habits);//,
+
+                telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
+            } catch (IOException e) {
+                System.out.println("Ошибка загрузки фото");
+            }
         }
+
     }
-
-
-    private void savePhoto(Update update) {
-        GetFile getFileRequest = new GetFile(update.message().photo()[0].fileId());
-        GetFileResponse getFileResponse = telegramBot.execute(getFileRequest);
-        try {
-            File file = getFileResponse.file();
-            file.fileSize();
-            byte[] fileContent = telegramBot.getFileContent(file);
-            photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption());//,
-
-            telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
-        } catch (IOException e) {
-            System.out.println("Ошибка загрузки фото");
-        }
-    }
-
 
 }
