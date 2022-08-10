@@ -45,6 +45,7 @@ public class PhotoService {
         photo.setFilePath(filePath.toString());
         photo.setFileSize(file.fileSize());
         photo.setCaption(caption);
+
         photo.setData(pictureFile);
 
         photo.setChatId(personId);
