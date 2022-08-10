@@ -44,7 +44,8 @@ public class PhotoService {
         ReportData photo = findPhoto(personId);
         photo.setFilePath(filePath.toString());
         photo.setFileSize(file.fileSize());
-//        photo.setCaption(caption);
+        photo.setCaption(caption);
+
         photo.setData(pictureFile);
 
         photo.setChatId(personId);
