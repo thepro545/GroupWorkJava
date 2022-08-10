@@ -22,6 +22,7 @@ import pro.sky.GroupWorkJava.service.PhotoService;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -60,6 +61,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             "Самочувствие: ваш текст;  \n" +
             "Поведение: ваш текст;";
 
+    private static final String REGEX_MESSAGE = "(Рацион:)(\\s)([\\W]+)(;)\n" +
+            "(Самочувствие:)(\\s)([\\W]+)(;)\n" +
+            "(Поведение:)(\\s)([\\W]+)(;)";
+
+
     @Autowired
     private PersonRepository personRepository;
 
@@ -88,22 +94,41 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
 
-            if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
-//                getReport(update);
-//                savePhoto(update);
-//                photoService.textCaption(update, update.message().caption());
-                Pattern pattern = Pattern.compile("(Рацион:)(\\s)(\\W+)(;)\n" +
-                        "(Самочувствие:)(\\s)(\\W+)(;)\n" +
-                        "(Поведение:)(\\s)(\\W+)(;)");
+//            if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
+////                getReport(update);
+////                savePhoto(update);
+////                photoService.textCaption(update, update.message().caption());
+////                Pattern pattern = Pattern.compile(REGEX_MESSAGE);
+//                Pattern pattern = Pattern.compile("(Рацион:)(\\s)([\\W]+)(;)\n" +
+//                        "(Самочувствие:)(\\s)([\\W]+)(;)\n" +
+//                        "(Поведение:)(\\s)([\\W]+)(;)");
+//                Matcher matcher = pattern.matcher(update.message().caption());
+//                System.out.println("222");
+//                if (matcher.matches()) {
+//                    System.out.println("123");
+//                    String ration = matcher.group(3);
+//                    String health = matcher.group(7);
+//                    String habits = matcher.group(11);
+//                    System.out.println(ration);
+//                    System.out.println(health);
+//                    System.out.println(habits);
+//                }
+//            }
+
+            if (update.message().photo() != null && update.message().caption() != null) {
+                Pattern pattern = Pattern.compile("(Рацион:)(\\s)([\\W]+)(;)\n" +
+                        "(Самочувствие:)(\\s)([\\W]+)(;)\n" +
+                        "(Поведение:)(\\s)([\\W]+)(;)");
                 Matcher matcher = pattern.matcher(update.message().caption());
+                System.out.println(matcher);
                 if (matcher.matches()) {
-                    ReportData photo = photoService.findPhoto(update.message().chat().id());
-                    String ration = matcher.group(3);
-                    String health = matcher.group(7);
-                    String habits = matcher.group(11);
-                    photo.setRation(ration);
-                    photo.setHabits(habits);
-                    photo.setRation(health);
+                    String rac = matcher.group(3);
+                    String pov = matcher.group(7);
+                    String hab = matcher.group(11);
+
+                    System.out.println(rac);
+                    System.out.println(pov);
+                    System.out.println(hab);
                 }
             }
             // Добавление имени и телефона в базу через кнопку оставить контакты
@@ -111,6 +136,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 shareContact(update);
 
             }
+
 
             long chatId = update.message().chat().id();
 
@@ -216,21 +242,21 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
     }
 
-    public void getReport(Update update) {
-        Pattern pattern = Pattern.compile("(Рацион:)(\\s)(\\W+)(;)\n" +
-                "(Самочувствие:)(\\s)(\\W+)(;)\n" +
-                "(Поведение:)(\\s)(\\W+)(;)");
-        Matcher matcher = pattern.matcher(update.message().caption());
-        if (matcher.matches()) {
-            ReportData photo = photoService.findPhoto(update.message().chat().id());
-            String ration = matcher.group(3);
-            String health = matcher.group(7);
-            String habits = matcher.group(11);
-            photo.setRation(ration);
-            photo.setHabits(habits);
-            photo.setRation(health);
-        }
-    }
+//    public void getReport(Update update) {
+//        Pattern pattern = Pattern.compile("(Рацион:)(\\s)(\\W+)(;)\n" +
+//                "(Самочувствие:)(\\s)(\\W+)(;)\n" +
+//                "(Поведение:)(\\s)(\\W+)(;)");
+//        Matcher matcher = pattern.matcher(update.message().caption());
+//        if (matcher.matches()) {
+//            ReportData photo = photoService.findPhoto(update.message().chat().id());
+//            String ration = matcher.group(3);
+//            String health = matcher.group(7);
+//            String habits = matcher.group(11);
+//            photo.setRation(ration);
+//            photo.setHabits(habits);
+//            photo.setRation(health);
+//        }
+//    }
 
     private void savePhoto(Update update) {
         GetFile getFileRequest = new GetFile(update.message().photo()[0].fileId());
@@ -240,7 +266,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             file.fileSize();
             byte[] fileContent = telegramBot.getFileContent(file);
             photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption());//,
-//            photoService.textCaption(update.message().chat().id(),  update.message().caption());
             telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
         } catch (IOException e) {
             System.out.println("Ошибка загрузки фото");

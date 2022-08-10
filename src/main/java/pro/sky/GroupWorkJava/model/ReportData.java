@@ -1,0 +1,169 @@
+package pro.sky.GroupWorkJava.model;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import javax.persistence.*;
+import java.util.Arrays;
+import java.util.Objects;
+
+@Entity
+
+public class ReportData {
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private Long chatId;
+
+    private String photo;
+
+    private String ration;
+
+    private String health;
+
+    private String habits;
+
+    private Integer days;
+
+    private String filePath;
+    private long fileSize;
+
+
+
+    public ReportData(Long chatId, String photo, String caption, byte[] data) {
+        this.chatId = chatId;
+        this.photo = photo;
+        this.caption = caption;
+        this.data = data;
+    }
+
+    public ReportData(String ration, String health, String habits) {
+        this.ration = ration;
+        this.health = health;
+        this.habits = habits;
+    }
+
+    private String caption;
+
+    @Lob
+    private byte[] data;
+
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
+    }
+
+    @OneToOne
+    private Person person;
+
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+
+    public ReportData() {
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ReportData that = (ReportData) o;
+        return id == that.id && Objects.equals(photo, that.photo) && Objects.equals(ration, that.ration) && Objects.equals(health, that.health) && Objects.equals(habits, that.habits) && Objects.equals(days, that.days);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, photo, ration, health, habits, days);
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getRation() {
+        return ration;
+    }
+
+    public void setRation(String ration) {
+        this.ration = ration;
+    }
+
+    public String getHealth() {
+        return health;
+    }
+
+    public void setHealth(String health) {
+        this.health = health;
+    }
+
+    public String getHabits() {
+        return habits;
+    }
+
+    public void setHabits(String habits) {
+        this.habits = habits;
+    }
+
+    public Integer getDays() {
+        return days;
+    }
+
+    public void setDays(Integer days) {
+        this.days = days;
+    }
+
+    @Override
+    public String toString() {
+        return "ReportData{" +
+                "id=" + id +
+                ", chatId=" + chatId +
+                ", photo='" + photo + '\'' +
+                ", ration='" + ration + '\'' +
+                ", health='" + health + '\'' +
+                ", habits='" + habits + '\'' +
+                ", days=" + days +
+                ", filePath='" + filePath + '\'' +
+                ", fileSize=" + fileSize +
+                ", caption='" + caption + '\'' +
+                ", data=" + Arrays.toString(data) +
+                ", person=" + person +
+                '}';
+    }
+}
