@@ -24,6 +24,20 @@ public class Person {
     @JoinColumn(name = "dog_id")
     private Dog dog;
 
+    @OneToOne(orphanRemoval = true)
+    @JoinTable(name = "person_report_data",
+            joinColumns = @JoinColumn(name = "person_null"),
+            inverseJoinColumns = @JoinColumn(name = "report_data_id"))
+    private ReportData reportData;
+
+    public ReportData getReportData() {
+        return reportData;
+    }
+
+    public void setReportData(ReportData reportData) {
+        this.reportData = reportData;
+    }
+
     public Person() {
     }
 
