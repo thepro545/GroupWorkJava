@@ -15,8 +15,12 @@ import pro.sky.GroupWorkJava.model.Person;
 import pro.sky.GroupWorkJava.repository.PersonRepository;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -70,28 +74,43 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
 
-            // Добавление имени и телефона в базу через кнопку оставить контакты
-            if (update.message().contact() != null) {
-                String firstName = update.message().contact().firstName();
-                String lastName = update.message().contact().lastName();
-                String phone = update.message().contact().phoneNumber();
-                long finalChatId = update.message().chat().id();
-                var sortChatId = personRepository.findAll().stream().filter(i -> i.getChatId() == finalChatId)
-                        .collect(Collectors.toList());
-                if (!sortChatId.isEmpty()) {
-                    sendMessage(finalChatId, "Вы уже в базе");
-                    return;
+
+            if (update.message().photo() != null && update.message().caption() != null) {
+                Pattern pattern = Pattern.compile("(Рацион питания:)(\\s)([\\W]+)(;)\n" +
+                        "(Повадки:)(\\s)([\\W]+)(;)");
+                Matcher matcher = pattern.matcher(update.message().caption());
+                if (matcher.matches()) {
+                    String rac = matcher.group(3);
+                    String pov = matcher.group(7);
+                    System.out.println(rac);
+                    System.out.println(pov);
                 }
-                if (lastName != null) {
-                    String name = firstName + " " + lastName;
-                    personRepository.save(new Person(name, phone, finalChatId));
+            }
+
+
+
+                // Добавление имени и телефона в базу через кнопку оставить контакты
+                if (update.message().contact() != null) {
+                    String firstName = update.message().contact().firstName();
+                    String lastName = update.message().contact().lastName();
+                    String phone = update.message().contact().phoneNumber();
+                    long finalChatId = update.message().chat().id();
+                    var sortChatId = personRepository.findAll().stream().filter(i -> i.getChatId() == finalChatId)
+                            .collect(Collectors.toList());
+                    if (!sortChatId.isEmpty()) {
+                        sendMessage(finalChatId, "Вы уже в базе");
+                        return;
+                    }
+                    if (lastName != null) {
+                        String name = firstName + " " + lastName;
+                        personRepository.save(new Person(name, phone, finalChatId));
+                        sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
+                        return;
+                    }
+                    personRepository.save(new Person(firstName, phone, finalChatId));
                     sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
                     return;
                 }
-                personRepository.save(new Person(firstName, phone, finalChatId));
-                sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
-                return;
-            }
             long chatId = update.message().chat().id();
 
             try {
