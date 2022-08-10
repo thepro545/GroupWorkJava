@@ -14,9 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
 import pro.sky.GroupWorkJava.model.Person;
-import pro.sky.GroupWorkJava.model.ReportData;
+
 import pro.sky.GroupWorkJava.repository.PersonRepository;
-import pro.sky.GroupWorkJava.repository.ReportRepository;
 import pro.sky.GroupWorkJava.service.PhotoService;
 
 import javax.annotation.PostConstruct;
@@ -92,56 +91,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
 
-
-//            if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
-////                getReport(update);
-////                savePhoto(update);
-////                photoService.textCaption(update, update.message().caption());
-////                Pattern pattern = Pattern.compile(REGEX_MESSAGE);
-//                Pattern pattern = Pattern.compile("(Рацион:)(\\s)([\\W]+)(;)\n" +
-//                        "(Самочувствие:)(\\s)([\\W]+)(;)\n" +
-//                        "(Поведение:)(\\s)([\\W]+)(;)");
-//                Matcher matcher = pattern.matcher(update.message().caption());
-//                System.out.println("222");
-//                if (matcher.matches()) {
-//                    System.out.println("123");
-//                    String ration = matcher.group(3);
-//                    String health = matcher.group(7);
-//                    String habits = matcher.group(11);
-//                    System.out.println(ration);
-//                    System.out.println(health);
-//                    System.out.println(habits);
-//                }
-//            }
-
+            //Обработка отчета ( Фото и текст)
             if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
-//                getReport(update);
-//                savePhoto(update);
-//                photoService.textCaption(update, update.message().caption());
-                Pattern pattern = Pattern.compile("(Рацион:)(\\s)(\\W+)(;)\n" +
-                        "(Самочувствие:)(\\s)(\\W+)(;)\n" +
-                        "(Поведение:)(\\s)(\\W+)(;)");
-                Matcher matcher = pattern.matcher(update.message().caption());
-                System.out.println(matcher);
-                if (matcher.matches()) {
-
-                    String rac = matcher.group(3);
-                    String pov = matcher.group(7);
-                    String hab = matcher.group(11);
-
-                    System.out.println(rac);
-                    System.out.println(pov);
-                    System.out.println(hab);
-
-                    ReportData photo = photoService.findPhoto(update.message().chat().id());
-                    String ration = matcher.group(3);
-                    String health = matcher.group(7);
-                    String habits = matcher.group(11);
-                    photo.setRation(ration);
-                    photo.setHabits(habits);
-                    photo.setRation(health);
-
-                }
+                getReport(update);
+                savePhoto(update);
             }
             // Добавление имени и телефона в базу через кнопку оставить контакты
             if (update.message() != null && update.message().contact() != null) {
@@ -255,18 +208,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
 
     public void getReport(Update update) {
-        Pattern pattern = Pattern.compile("(Рацион:)(\\s)(\\W+)(;)\n" +
-                "(Самочувствие:)(\\s)(\\W+)(;)\n" +
-                "(Поведение:)(\\s)(\\W+)(;)");
+        Pattern pattern = Pattern.compile(REGEX_MESSAGE);
         Matcher matcher = pattern.matcher(update.message().caption());
         if (matcher.matches()) {
-            ReportData photo = photoService.findPhoto(update.message().chat().id());
             String ration = matcher.group(3);
             String health = matcher.group(7);
             String habits = matcher.group(11);
-            photo.setRation(ration);
-            photo.setHabits(habits);
-            photo.setRation(health);
+            System.out.println(ration);
+            System.out.println(habits);
+            System.out.println(health);
         }
     }
 

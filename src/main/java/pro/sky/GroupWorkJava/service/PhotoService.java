@@ -38,39 +38,17 @@ public class PhotoService {
     }
 
     public void uploadPhoto(Long personId, byte[] pictureFile, File file, String caption) throws IOException { //, String caption
-        Path filePath = Path.of(photoDir, personId + "_" +"photo" + "." + getExtensions(Objects.requireNonNull(file.filePath())));
+        Path filePath = Path.of(photoDir, personId + "_" + "photo" + "." + getExtensions(Objects.requireNonNull(file.filePath())));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         ReportData photo = findPhoto(personId);
         photo.setFilePath(filePath.toString());
         photo.setFileSize(file.fileSize());
         photo.setCaption(caption);
-
         photo.setData(pictureFile);
-
         photo.setChatId(personId);
         reportRepository.save(photo);
 
-    }
-
-    public void textCaption(Long personId, String caption) {
-        Pattern pattern = Pattern.compile(REGEX_MESSAGE);
-        Matcher matcher = pattern.matcher(caption);
-        ReportData photo = findPhoto(personId);
-        System.out.println("111");
-        if (matcher.matches()) {
-            System.out.println("555");
-            String ration = matcher.group(3);
-            String health = matcher.group(7);
-            String habits = matcher.group(11);
-            photo.setRation(ration);
-            photo.setHabits(habits);
-            photo.setHealth(health);
-            System.out.println("123");
-        }
-        else {
-            System.out.println("321");
-        }
     }
 
     public ReportData findPhoto(Long personId) {
