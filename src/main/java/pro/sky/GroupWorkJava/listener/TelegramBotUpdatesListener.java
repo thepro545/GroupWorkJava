@@ -223,7 +223,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 File file = getFileResponse.file();
                 file.fileSize();
                 byte[] fileContent = telegramBot.getFileContent(file);
-                photoService.uploadPhoto(update.message().chat().id(), fileContent, file,
+                photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
                         ration, health, habits);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));

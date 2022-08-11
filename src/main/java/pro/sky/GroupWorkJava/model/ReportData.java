@@ -24,6 +24,7 @@ public class ReportData {
     private Integer days;
 
     private String filePath;
+
     private long fileSize;
 
     @Lob
@@ -32,6 +33,7 @@ public class ReportData {
     @OneToOne
     private Person person;
 
+    private String caption;
     public ReportData() {
 
     }
@@ -56,6 +58,13 @@ public class ReportData {
         this.habits = habits;
     }
 
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
 
     public Long getChatId() {
         return chatId;
