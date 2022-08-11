@@ -37,10 +37,7 @@ public class ReportData {
 
     private String caption;
 
-
-
     private Date lastMessage;
-
 
     public ReportData() {
 
@@ -66,6 +63,7 @@ public class ReportData {
         this.habits = habits;
     }
 
+
     public Date getLastMessage() {
         return lastMessage;
     }
@@ -73,6 +71,7 @@ public class ReportData {
     public void setLastMessage(Date lastMessage) {
         this.lastMessage = lastMessage;
     }
+  
     public String getCaption() {
         return caption;
     }
