@@ -11,6 +11,8 @@ import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,13 +36,16 @@ public class PhotoService {
     }
 
     public void uploadPhoto(Long personId, byte[] pictureFile, File file,
-                            String caption, String ration, String health, String habits) throws IOException {
-        Path filePath = Path.of(photoDir, personId + "_" + "photo" + "." +
-                getExtensions(Objects.requireNonNull(file.filePath())));
-        Files.createDirectories(filePath.getParent());
-        Files.deleteIfExists(filePath);
+                            String caption, String ration, String health, String habits, String filePath, Date test) throws IOException {
+//        Path filePath = Path.of(photoDir, personId + "_" + "photo" + "." +
+//                getExtensions(Objects.requireNonNull(file.filePath())));
+//        String filePaaaath = "/photos/file_8.jpg";
+//        Path filePath111  = Path.of(filePath);
+//        Files.createDirectories(filePath.getParent());
+//        Files.deleteIfExists(filePath);
         ReportData photo = findPhoto(personId);
-        photo.setFilePath(filePath.toString());
+        photo.setLastMessage(test);
+        photo.setFilePath(filePath);
         photo.setFileSize(file.fileSize());
         photo.setData(pictureFile);
         photo.setChatId(personId);

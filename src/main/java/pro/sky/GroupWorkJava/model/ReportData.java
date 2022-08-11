@@ -3,7 +3,9 @@ package pro.sky.GroupWorkJava.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -34,6 +36,12 @@ public class ReportData {
     private Person person;
 
     private String caption;
+
+
+
+    private Date lastMessage;
+
+
     public ReportData() {
 
     }
@@ -58,6 +66,13 @@ public class ReportData {
         this.habits = habits;
     }
 
+    public Date getLastMessage() {
+        return lastMessage;
+    }
+
+    public void setLastMessage(Date lastMessage) {
+        this.lastMessage = lastMessage;
+    }
     public String getCaption() {
         return caption;
     }
