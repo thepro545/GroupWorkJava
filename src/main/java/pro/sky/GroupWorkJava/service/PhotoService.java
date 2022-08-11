@@ -34,7 +34,7 @@ public class PhotoService {
     }
 
     public void uploadPhoto(Long personId, byte[] pictureFile, File file,
-                            String ration, String health, String habits) throws IOException {
+                            String caption, String ration, String health, String habits) throws IOException {
         Path filePath = Path.of(photoDir, personId + "_" + "photo" + "." +
                 getExtensions(Objects.requireNonNull(file.filePath())));
         Files.createDirectories(filePath.getParent());
@@ -44,6 +44,7 @@ public class PhotoService {
         photo.setFileSize(file.fileSize());
         photo.setData(pictureFile);
         photo.setChatId(personId);
+        photo.setCaption(caption);
         photo.setRation(ration);
         photo.setHealth(health);
         photo.setHabits(habits);
