@@ -55,15 +55,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             "- Фото животного.  \n" +
             "- Рацион животного\n" +
             "- Общее самочувствие и привыкание к новому месту\n" +
-            "- Изменение в поведении: отказ от старых привычек, приобретение новых.\nСкопируйте следующий пример";
+            "- Изменение в поведении: отказ от старых привычек, приобретение новых.\nСкопируйте следующий пример. Не забудьте прикрепить фото";
 
     private static final String reportExample = "Рацион: ваш текст;\n" +
-            "Самочувствие: ваш текст;  \n" +
+            "Самочувствие: ваш текст;\n" +
             "Поведение: ваш текст;";
 
-    private static final String REGEX_MESSAGE = "(Рацион:)(\\s)([\\W]+)(;)\n" +
-            "(Самочувствие:)(\\s)([\\W]+)(;)\n" +
-            "(Поведение:)(\\s)([\\W]+)(;)";
+    private static final String REGEX_MESSAGE = "(Рацион:)(\\s)(\\W+)(;)\n" +
+            "(Самочувствие:)(\\s)(\\W+)(;)\n" +
+            "(Поведение:)(\\s)(\\W+)(;)";
 
     @Autowired
     private ReportRepository reportRepository;
@@ -95,11 +95,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             Integer messageId = update.message().messageId();
 
             //Обработка отчета ( Фото и текст)
-            if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
-
-                //         savePhoto(update);
+            if (update.message().photo() != null && update.message().caption() != null) {
                 getReport(update);
             }
+
             // Добавление имени и телефона в базу через кнопку оставить контакты
             if (update.message() != null && update.message().contact() != null) {
                 shareContact(update);
@@ -224,8 +223,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 File file = getFileResponse.file();
                 file.fileSize();
                 byte[] fileContent = telegramBot.getFileContent(file);
-                photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
-                        ration, health, habits);//,
+                photoService.uploadPhoto(update.message().chat().id(), fileContent, file,
+                        ration, health, habits);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
             } catch (IOException e) {

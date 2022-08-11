@@ -24,10 +24,6 @@ import java.util.regex.Pattern;
 @Transactional
 public class PhotoService {
     private final ReportRepository reportRepository;
-    private static final String REGEX_MESSAGE = "(Рацион:)(\\s)(\\W+)(;)\n" +
-            "(Самочувствие:)(\\s)(\\W+)(;)\n" +
-            "(Поведение:)(\\s)(\\W+)(;)";
-
 
     @Value("/photo")
     private String photoDir;
@@ -38,7 +34,7 @@ public class PhotoService {
     }
 
     public void uploadPhoto(Long personId, byte[] pictureFile, File file,
-                            String caption, String ration, String health, String habits) throws IOException { //, String caption
+                            String ration, String health, String habits) throws IOException {
         Path filePath = Path.of(photoDir, personId + "_" + "photo" + "." +
                 getExtensions(Objects.requireNonNull(file.filePath())));
         Files.createDirectories(filePath.getParent());
@@ -46,7 +42,6 @@ public class PhotoService {
         ReportData photo = findPhoto(personId);
         photo.setFilePath(filePath.toString());
         photo.setFileSize(file.fileSize());
-        photo.setCaption(caption);
         photo.setData(pictureFile);
         photo.setChatId(personId);
         photo.setRation(ration);
