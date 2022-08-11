@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
 import com.pengrad.telegrambot.response.SendResponse;
+import org.apache.catalina.webresources.ClasspathURLStreamHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import pro.sky.GroupWorkJava.service.PhotoService;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -217,14 +219,20 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String health = matcher.group(7);
             String habits = matcher.group(11);
 
-            GetFile getFileRequest = new GetFile(update.message().photo()[0].fileId());
+            GetFile getFileRequest = new GetFile(update.message().photo()[1].fileId());
             GetFileResponse getFileResponse = telegramBot.execute(getFileRequest);
             try {
                 File file = getFileResponse.file();
                 file.fileSize();
+//                String fullPath = telegramBot.getFullFilePath(file);
+                String fullPathPhoto = file.filePath();
+
+//                Date time = new Date();
+                long timeDate = update.message().date();
+                Date dateSendMessage = new Date(timeDate*1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
                 photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
-                        ration, health, habits);
+                        ration, health, habits, fullPathPhoto, dateSendMessage);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
             } catch (IOException e) {
