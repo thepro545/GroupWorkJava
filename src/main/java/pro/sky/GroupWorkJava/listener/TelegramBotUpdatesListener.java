@@ -229,10 +229,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
 //                Date time = new Date();
                 long timeDate = update.message().date();
-                Date test = new Date(timeDate*1000);
+                Date dateSendMessage = new Date(timeDate*1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
                 photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
-                        ration, health, habits, fullPathPhoto, test);
+                        ration, health, habits, fullPathPhoto, dateSendMessage);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
             } catch (IOException e) {
