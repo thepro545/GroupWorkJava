@@ -27,10 +27,6 @@ import java.util.regex.Pattern;
 public class PhotoService {
     private final ReportRepository reportRepository;
 
-    @Value("/photo")
-    private String photoDir;
-
-
     public PhotoService(ReportRepository reportRepository) {
         this.reportRepository = reportRepository;
     }

@@ -96,20 +96,20 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
 
-            //Обработка отчета ( Фото и текст)
-            if (update.message().photo() != null && update.message().caption() != null) {
-                getReport(update);
-            }
 
-            // Добавление имени и телефона в базу через кнопку оставить контакты
-            if (update.message() != null && update.message().contact() != null) {
-                shareContact(update);
-            }
 
             long chatId = update.message().chat().id();
 
             try {
+                //Обработка отчета ( Фото и текст)
+                if (update.message().photo() != null && update.message().caption() != null) {
+                    getReport(update);
+                }
 
+                // Добавление имени и телефона в базу через кнопку оставить контакты
+                if (update.message() != null && update.message().contact() != null) {
+                    shareContact(update);
+                }
                 switch (textUpdate) {
                     case START_CMD:
                         sendMessage(chatId, nameUser + GREETING_TEXT);
@@ -161,7 +161,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 //                    sendReplyMessage(chatId, "Я не знаю что это. Попробуйте другую функцию",messageId);
 //                }
             } catch (NullPointerException e) {
-                sendReplyMessage(chatId, "Ошибка. Я не понимаю это сообщение", messageId);
+//                sendReplyMessage(chatId, "Ошибка. Я не понимаю это сообщение", messageId);
                 System.out.println("Ошибка");
             }
 
@@ -227,7 +227,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 //                String fullPath = telegramBot.getFullFilePath(file);
                 String fullPathPhoto = file.filePath();
 
-//                Date time = new Date();
                 long timeDate = update.message().date();
                 Date dateSendMessage = new Date(timeDate*1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
@@ -235,6 +234,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         ration, health, habits, fullPathPhoto, dateSendMessage);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
+                System.out.println("Отчет успешно принят от: " + update.message().chat().id());
             } catch (IOException e) {
                 System.out.println("Ошибка загрузки фото");
             }
