@@ -1,15 +1,12 @@
 package pro.sky.GroupWorkJava.controller;
 
-import com.pengrad.telegrambot.model.File;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import pro.sky.GroupWorkJava.model.ReportData;
-import pro.sky.GroupWorkJava.service.PhotoService;
+import pro.sky.GroupWorkJava.service.PhotoReportService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -24,24 +21,24 @@ import java.nio.file.Path;
  */
 @RestController
 @RequestMapping("photoReports")
-public class PhotoController {
+public class PhotoReportController {
 
-    private final PhotoService photoService;
+    private final PhotoReportService photoReportService;
 
     private final String fileType = "image/jpeg";
 
-    public PhotoController(PhotoService photoService) {
-        this.photoService = photoService;
+    public PhotoReportController(PhotoReportService photoReportService) {
+        this.photoReportService = photoReportService;
     }
 
     @GetMapping(value = "/{id}/check")
-    public ReportData downloadPhoto1(@PathVariable Long id) {
-        return photoService.findPhoto(id);
+    public ReportData downloadReport(@PathVariable Long id) {
+        return photoReportService.findPhotoReport(id);
     }
 
     @GetMapping(value = "/{id}/photo-from-db")
-    public ResponseEntity<byte[]> downloadPhoto(@PathVariable Long id) {
-        ReportData reportData = photoService.findPhoto(id);
+    public ResponseEntity<byte[]> downloadPhotoFromDB(@PathVariable Long id) {
+        ReportData reportData = photoReportService.findPhotoReport(id);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(fileType));
@@ -51,12 +48,12 @@ public class PhotoController {
     }
 
     @GetMapping(value = "/{id}/avatar-from-file")
-    public void downloadPhoto(@PathVariable Long id, HttpServletResponse response) throws IOException {
-        ReportData reportData = photoService.findPhoto(id);
+    public void downloadPhotoFromFile(@PathVariable Long id, HttpServletResponse response) throws IOException {
+        ReportData reportData = photoReportService.findPhotoReport(id);
         Path path = Path.of(reportData.getFilePath());
 
         try (InputStream is = Files.newInputStream(path);
-             OutputStream os = response.getOutputStream();) {
+             OutputStream os = response.getOutputStream()) {
             response.setStatus(200);
             response.setContentType(fileType);
             response.setContentLength((int) reportData.getFileSize());
