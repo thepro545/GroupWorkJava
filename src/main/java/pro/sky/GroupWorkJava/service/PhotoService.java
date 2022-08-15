@@ -31,8 +31,23 @@ public class PhotoService {
         this.reportRepository = reportRepository;
     }
 
+    public void uploadPhoto(Long personId, byte[] pictureFile, File file, String ration, String health, String habits, String filePath, Date dateSendMessage) throws IOException {
+
+        ReportData photo = findPhoto(personId);
+        photo.setLastMessage(dateSendMessage);
+        photo.setFilePath(filePath);
+        photo.setFileSize(file.fileSize());
+        photo.setData(pictureFile);
+        photo.setChatId(personId);
+        photo.setRation(ration);
+        photo.setHealth(health);
+        photo.setHabits(habits);
+        reportRepository.save(photo);
+
+    }
+
     public void uploadPhoto(Long personId, byte[] pictureFile, File file,
-                            String caption, String ration, String health, String habits, String filePath, Date dateSendMessage) throws IOException {
+                            String caption, String filePath, Date dateSendMessage) throws IOException {
 
         ReportData photo = findPhoto(personId);
         photo.setLastMessage(dateSendMessage);
@@ -41,12 +56,10 @@ public class PhotoService {
         photo.setData(pictureFile);
         photo.setChatId(personId);
         photo.setCaption(caption);
-        photo.setRation(ration);
-        photo.setHealth(health);
-        photo.setHabits(habits);
         reportRepository.save(photo);
 
     }
+
 
     public ReportData findPhoto(Long personId) {
         return reportRepository.findById(personId).orElse(new ReportData());

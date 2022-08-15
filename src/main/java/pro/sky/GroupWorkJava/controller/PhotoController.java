@@ -39,7 +39,7 @@ public class PhotoController {
         return photoService.findPhoto(id);
     }
 
-    @GetMapping(value = "/{id}/photo-from-db")
+    @GetMapping(value = "/{id}/check-photo")
     public ResponseEntity<byte[]> downloadPhoto(@PathVariable Long id) {
         ReportData reportData = photoService.findPhoto(id);
 

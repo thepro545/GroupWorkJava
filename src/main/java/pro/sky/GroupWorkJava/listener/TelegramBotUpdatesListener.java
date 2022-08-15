@@ -97,7 +97,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             Integer messageId = update.message().messageId();
 
 
-
             long chatId = update.message().chat().id();
 
             try {
@@ -228,9 +227,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 String fullPathPhoto = file.filePath();
 
                 long timeDate = update.message().date();
-                Date dateSendMessage = new Date(timeDate*1000);
+                Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
-                photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
+                photoService.uploadPhoto(update.message().chat().id(), fileContent, file,
                         ration, health, habits, fullPathPhoto, dateSendMessage);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
@@ -238,8 +237,26 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             } catch (IOException e) {
                 System.out.println("Ошибка загрузки фото");
             }
+        } else {
+            GetFile getFileRequest = new GetFile(update.message().photo()[1].fileId());
+            GetFileResponse getFileResponse = telegramBot.execute(getFileRequest);
+            try {
+                File file = getFileResponse.file();
+                file.fileSize();
+                String fullPathPhoto = file.filePath();
+
+                long timeDate = update.message().date();
+                Date dateSendMessage = new Date(timeDate * 1000);
+                byte[] fileContent = telegramBot.getFileContent(file);
+                photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
+                        fullPathPhoto, dateSendMessage);
+
+                telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
+                System.out.println("Отчет успешно принят от: " + update.message().chat().id());
+            } catch (IOException e) {
+                System.out.println("Ошибка загрузки фото");
+            }
+
         }
-
     }
-
 }
