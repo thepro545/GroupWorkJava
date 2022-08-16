@@ -1,6 +1,7 @@
 package pro.sky.GroupWorkJava.KeyBoard;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -16,13 +17,28 @@ import java.util.List;
 
 @Service
 public class KeyBoardShelter {
-
     @Autowired
     private TelegramBot telegramBot;
 
     private org.slf4j.Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
 
+    /**
+     * Меню выбора
+     *
+     * @param chatId
+     */
+
+    public void chooseMenu(long chatId) {
+        logger.info("Method sendMessage has been run: {}, {}", chatId, "Вызвано меню выбора ");
+        String emoji_cat = EmojiParser.parseToUnicode(":cat:");
+        String emoji_dog = EmojiParser.parseToUnicode(":dog:");
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                new KeyboardButton(emoji_cat + " CAT"));
+        replyKeyboardMarkup.addRow(new KeyboardButton(emoji_dog + " DOG"));
+
+        returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Выберите, кого хотите приютить:");
+    }
 
     /**
      * Основеное Меню
@@ -31,9 +47,8 @@ public class KeyBoardShelter {
      */
     public void sendMenu(long chatId) {
         logger.info("Method sendMessage has been run: {}, {}", chatId, "Вызвано основное меню ");
-        String emoji_kissing = EmojiParser.parseToUnicode(":pig:");
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new KeyboardButton(emoji_kissing + "Информация о возможностях бота"),
+                new KeyboardButton("Информация о возможностях бота"),
                 new KeyboardButton("Узнать информацию о приюте"));
         replyKeyboardMarkup.addRow(new KeyboardButton("Как взять питомца из приюта"),
                 new KeyboardButton("Прислать отчет о питомце"));
@@ -54,27 +69,6 @@ public class KeyBoardShelter {
         replyKeyboardMarkup.addRow(new KeyboardButton("Позвать волонтера"),
                 new KeyboardButton("Вернуться в меню"));
         returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Информация о приюте");
-    }
-
-    public void checkInline(Long chatId) {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(
-                new InlineKeyboardButton("Тут гугл").url("www.google.com"),
-                new InlineKeyboardButton("Расскажите о нас!").switchInlineQuery("Бот, которые поможет взять питомца"));
-        returnResponse(inlineKeyboardMarkup, chatId, "TEXT TYT");
-    }
-
-    public void returnResponse(InlineKeyboardMarkup o, Long chatId, String text) {
-        SendMessage request = new SendMessage(chatId, text)
-                .replyMarkup(o)
-                .parseMode(ParseMode.HTML)
-                .disableWebPagePreview(false);
-        SendResponse sendResponse = telegramBot.execute(request);
-        if (!sendResponse.isOk()) {
-            int codeError = sendResponse.errorCode();
-            String description = sendResponse.description();
-            logger.info("code of error: {}", codeError);
-            logger.info("description -: {}", description);
-        }
     }
 
     /**

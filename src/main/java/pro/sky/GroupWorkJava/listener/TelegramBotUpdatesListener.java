@@ -27,6 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.vdurmont.emoji.EmojiParser;
+
 
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
@@ -93,7 +95,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String nameUser = update.message().chat().firstName();
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
-
+//            String emoji_cat = EmojiParser.parseToUnicode(":cat:");
+//            String emoji_dog = EmojiParser.parseToUnicode(":dog:");
 
             long chatId = update.message().chat().id();
 
@@ -107,13 +110,27 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (update.message() != null && update.message().contact() != null) {
                     shareContact(update);
                 }
+
+
+
                 switch (textUpdate) {
                     case START_CMD:
                         sendMessage(chatId, nameUser + GREETING_TEXT);
-                        keyBoardShelter.sendMenu(chatId);
+                        keyBoardShelter.chooseMenu(chatId);
                         break;
-                    case "Как взять питомца из приюта":
-                        keyBoardShelter.sendMenuTakeAnimal(chatId);
+
+                    case "\uD83D\uDC31 CAT":
+                        //что-то сделать
+                        keyBoardShelter.sendMenu(chatId);
+                        sendMessage(chatId, "Вы выбрали кошку, МЯУ:D");
+                        break;
+                    case "\uD83D\uDC36 DOG":
+                        //что-то сделать
+                        keyBoardShelter.sendMenu(chatId);
+                        sendMessage(chatId, "Вы выбрали собаку, ГАВ:D");
+                        break;
+                    case "Главное меню":
+                        keyBoardShelter.sendMenu(chatId);
                         break;
                     case "Узнать информацию о приюте":
                         keyBoardShelter.sendMenuInfoShelter(chatId);
@@ -128,13 +145,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         sendMessage(chatId, infoAboutReport);
                         sendMessage(chatId, reportExample);
                         break;
+                    case "Как взять питомца из приюта":
+                        keyBoardShelter.sendMenuTakeAnimal(chatId);
+                        break;
                     case "Вернуться в меню":
                         keyBoardShelter.sendMenu(chatId);
                         break;
                     case "Привет":
                         if (messageId != null) {
                             sendReplyMessage(chatId, "И тебе привет", messageId);
-                            keyBoardShelter.checkInline(chatId);
                             break;
                         }
                     case "Позвать волонтера":
@@ -154,13 +173,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         break;
 
                 }
-//                if (update.message().chat() != null) {
-//                    sendReplyMessage(chatId, "Я не знаю что это. Попробуйте другую функцию",messageId);
-//                }
             } catch (NullPointerException e) {
 //                sendReplyMessage(chatId, "Ошибка. Я не понимаю это сообщение", messageId);
                 System.out.println("Ошибка");
             }
+
 
 
         });
