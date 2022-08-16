@@ -74,7 +74,7 @@ class PhotoReportControllerTest {
 
         when(photoReportService.findPhotoReport(anyLong())).thenReturn(reportData);
         mockMvc.perform(
-                        get("/photoReports/{id}/avatar-from-file", 1L))
+                        get("/photoReports/{id}/photo-from-file", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().bytes(data))
                 .andExpect(content().contentType(fileType));
