@@ -23,20 +23,35 @@ public class PhotoReportService {
         this.reportRepository = reportRepository;
     }
 
-    public void uploadPhotoReport(Long personId, byte[] pictureFile, File file,
-                                  String caption, String ration, String health, String habits, String filePath, Date dateSendMessage) throws IOException {
-        ReportData photoReport = findPhotoReport(personId);
-        photoReport.setLastMessage(dateSendMessage);
-        photoReport.setFilePath(filePath);
-        photoReport.setFileSize(file.fileSize());
-        photoReport.setData(pictureFile);
-        photoReport.setChatId(personId);
-        photoReport.setCaption(caption);
-        photoReport.setRation(ration);
-        photoReport.setHealth(health);
-        photoReport.setHabits(habits);
-        reportRepository.save(photoReport);
+    public void uploadPhoto(Long personId, byte[] pictureFile, File file, String ration, String health, String habits, String filePath, Date dateSendMessage) throws IOException {
+
+        ReportData photo = findPhotoReport(personId);
+        photo.setLastMessage(dateSendMessage);
+        photo.setFilePath(filePath);
+        photo.setFileSize(file.fileSize());
+        photo.setData(pictureFile);
+        photo.setChatId(personId);
+        photo.setRation(ration);
+        photo.setHealth(health);
+        photo.setHabits(habits);
+        reportRepository.save(photo);
+
     }
+
+    public void uploadPhoto(Long personId, byte[] pictureFile, File file,
+                            String caption, String filePath, Date dateSendMessage) throws IOException {
+
+        ReportData photo = findPhotoReport(personId);
+        photo.setLastMessage(dateSendMessage);
+        photo.setFilePath(filePath);
+        photo.setFileSize(file.fileSize());
+        photo.setData(pictureFile);
+        photo.setChatId(personId);
+        photo.setCaption(caption);
+        reportRepository.save(photo);
+
+    }
+
 
     public ReportData findPhotoReport(Long personId) {
         return reportRepository.findById(personId).orElse(new ReportData());

@@ -8,7 +8,6 @@ import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
 import com.pengrad.telegrambot.response.SendResponse;
-import org.apache.catalina.webresources.ClasspathURLStreamHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +15,9 @@ import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
 import pro.sky.GroupWorkJava.model.Person;
 
-import pro.sky.GroupWorkJava.model.ReportData;
 import pro.sky.GroupWorkJava.repository.PersonRepository;
 import pro.sky.GroupWorkJava.repository.ReportRepository;
-import pro.sky.GroupWorkJava.service.PhotoService;
+import pro.sky.GroupWorkJava.service.PhotoReportService;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -74,7 +72,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Autowired
     private KeyBoardShelter keyBoardShelter;
     @Autowired
-    private PhotoService photoService;
+    private PhotoReportService photoReportService;
     @Autowired
     private TelegramBot telegramBot;
 
@@ -229,7 +227,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 long timeDate = update.message().date();
                 Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
-                photoService.uploadPhoto(update.message().chat().id(), fileContent, file,
+                photoReportService.uploadPhoto(update.message().chat().id(), fileContent, file,
                         ration, health, habits, fullPathPhoto, dateSendMessage);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
@@ -248,7 +246,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 long timeDate = update.message().date();
                 Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
-                photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
+                photoReportService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
                         fullPathPhoto, dateSendMessage);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
