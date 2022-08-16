@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
 import com.pengrad.telegrambot.response.SendResponse;
+import org.apache.catalina.webresources.ClasspathURLStreamHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,10 @@ import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
 import pro.sky.GroupWorkJava.model.Person;
 
+import pro.sky.GroupWorkJava.model.ReportData;
 import pro.sky.GroupWorkJava.repository.PersonRepository;
 import pro.sky.GroupWorkJava.repository.ReportRepository;
-import pro.sky.GroupWorkJava.service.PhotoReportService;
+import pro.sky.GroupWorkJava.service.PhotoService;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -72,7 +74,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Autowired
     private KeyBoardShelter keyBoardShelter;
     @Autowired
-    private PhotoReportService photoReportService;
+    private PhotoService photoService;
     @Autowired
     private TelegramBot telegramBot;
 
@@ -93,7 +95,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String nameUser = update.message().chat().firstName();
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
-
 
 
             long chatId = update.message().chat().id();
@@ -226,9 +227,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 String fullPathPhoto = file.filePath();
 
                 long timeDate = update.message().date();
-                Date dateSendMessage = new Date(timeDate*1000);
+                Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
-                photoReportService.uploadPhotoReport(update.message().chat().id(), fileContent, file, update.message().caption(),
+                photoService.uploadPhoto(update.message().chat().id(), fileContent, file,
                         ration, health, habits, fullPathPhoto, dateSendMessage);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
@@ -236,8 +237,26 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             } catch (IOException e) {
                 System.out.println("Ошибка загрузки фото");
             }
+        } else {
+            GetFile getFileRequest = new GetFile(update.message().photo()[1].fileId());
+            GetFileResponse getFileResponse = telegramBot.execute(getFileRequest);
+            try {
+                File file = getFileResponse.file();
+                file.fileSize();
+                String fullPathPhoto = file.filePath();
+
+                long timeDate = update.message().date();
+                Date dateSendMessage = new Date(timeDate * 1000);
+                byte[] fileContent = telegramBot.getFileContent(file);
+                photoService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
+                        fullPathPhoto, dateSendMessage);
+
+                telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
+                System.out.println("Отчет успешно принят от: " + update.message().chat().id());
+            } catch (IOException e) {
+                System.out.println("Ошибка загрузки фото");
+            }
+
         }
-
     }
-
 }
