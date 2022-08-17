@@ -103,6 +103,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         telegramBot.setUpdatesListener(this);
     }
 
+    private boolean isCat = false;
+
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
@@ -112,14 +114,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
 
-            Boolean isCat = false;
-
 //            String emoji_cat = EmojiParser.parseToUnicode(":cat:");
 //            String emoji_dog = EmojiParser.parseToUnicode(":dog:");
 
             long chatId = update.message().chat().id();
 
             try {
+
                 //Обработка отчета ( Фото и текст)
                 if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
                     getReport(update);
@@ -131,6 +132,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 }
 
                 switch (textUpdate) {
+
                     case START_CMD:
                         sendMessage(chatId, nameUser + GREETING_TEXT);
                         keyBoardShelter.chooseMenu(chatId);
@@ -138,8 +140,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
                     case "\uD83D\uDC31 CAT":
                         //что-то сделать
-                        isCat = true;
 
+                        isCat = true;
                         keyBoardShelter.sendMenu(chatId);
                         sendMessage(chatId, "Вы выбрали кошку, МЯУ:D");
                         break;
@@ -158,15 +160,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             keyBoardShelter.sendMenuInfoShelter(chatId);
                             break;
                     case "Информация о приюте":
-                        if (isCat = true) {
-                            sendMessage(chatId, infoAboutShelterCat);;
-                            break;
+                        if (isCat) {
+                            sendMessage(chatId, infoAboutShelterCat);
                         } else {
                             sendMessage(chatId, infoAboutShelterDog);
-                            break;
                         }
+                        break;
                     case "Советы и рекомендации":
-                        if (isCat = true) {
+                        if (isCat) {
                             sendMessage(chatId, infoAboutCats);;
                             break;
                         } else {
