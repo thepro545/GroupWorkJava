@@ -42,6 +42,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private static final String GREETING_TEXT = ", Приветствую! Чтобы найти то, что тебе нужно - нажми на нужную кнопку";
 
+    private static final String infoAboutBot = "Информация о возможностях бота \n- Бот может показать информацию о приюте \n" +
+            "- Покажет какие документы нужны \n- Бот может принимать ежедневный отчет о питомце\n" +
+            "- Может передать контактные данные волонтерам для связи \nИ пока всё)\n" +
+            "";
     private static final String infoAboutShelterDog = "Наш сайт с информацией о приюте для собак \nhttps://google.com \n" +
             "Контактные данные \nhttps://yandex.ru\n" +
             "Общие рекомендации \nhttps://ru.wikipedia.org\n" +
@@ -175,6 +179,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         break;
                     case "Как взять питомца из приюта":
                         keyBoardShelter.sendMenuTakeAnimal(chatId);
+                        break;
+                    case "Информация о возможностях бота":
+                        sendMessage(chatId, infoAboutBot);
                         break;
                     case "Вернуться в меню":
                         keyBoardShelter.sendMenu(chatId);
