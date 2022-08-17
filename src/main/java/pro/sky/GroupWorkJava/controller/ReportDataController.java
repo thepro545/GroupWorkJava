@@ -37,7 +37,7 @@ public class ReportDataController {
     }
 
     @PostMapping()
-    public void save(ReportData report) {
+    public void save(@RequestBody ReportData report) {
         reportDataService.save(report);
     }
 

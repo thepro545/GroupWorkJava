@@ -8,7 +8,6 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name="dog")
 public class Dog {
     @Id
     @GeneratedValue

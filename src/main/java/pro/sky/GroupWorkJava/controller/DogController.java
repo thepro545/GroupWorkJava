@@ -20,8 +20,8 @@ public class DogController {
     }
 
     @PostMapping()
-    public void save(Dog dog) {
-        service.create(dog);
+    public Dog save(@RequestBody Dog dog) {
+        return service.create(dog);
     }
 
     @DeleteMapping("{id}")
