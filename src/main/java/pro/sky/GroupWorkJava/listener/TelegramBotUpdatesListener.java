@@ -182,7 +182,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             break;
                         }
                     case "Позвать волонтера":
-                        sendMessage(chatId, "Мы передали ваше сообщение волонтерам. Если у вас закрытый профиль - поделитесь контактом. Справа сверху 3 точки - поделиться контактом");
+                        sendMessage(chatId, "Мы передали ваше сообщение волонтерам. " +
+                                "Если у вас закрытый профиль - поделитесь контактом. " +
+                                "Справа сверху 3 точки - отправить свой телефон");
                         sendForwardMessage(chatId, messageId);
                         break;
                     case "":
@@ -231,6 +233,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String firstName = update.message().contact().firstName();
             String lastName = update.message().contact().lastName();
             String phone = update.message().contact().phoneNumber();
+            String username = update.message().chat().username();
             long finalChatId = update.message().chat().id();
             var sortChatId = personRepository.findAll().stream().filter(i -> i.getChatId() == finalChatId)
                     .collect(Collectors.toList());
@@ -239,7 +242,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 return;
             }
             if (lastName != null) {
-                String name = firstName + " " + lastName;
+                String name = firstName + " " + lastName + " " + username;
                 personRepository.save(new Person(name, phone, finalChatId));
                 sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
                 return;
