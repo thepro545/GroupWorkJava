@@ -161,7 +161,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             break;
                     case "Информация о приюте":
                         if (isCat) {
-                            sendMessage(chatId, infoAboutShelterCat);;
+                            sendMessage(chatId, infoAboutShelterCat);
                         } else {
                             sendMessage(chatId, infoAboutShelterDog);
                         }
