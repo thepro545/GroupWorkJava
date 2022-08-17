@@ -109,6 +109,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             Integer messageId = update.message().messageId();
 
             Boolean isCat = false;
+
 //            String emoji_cat = EmojiParser.parseToUnicode(":cat:");
 //            String emoji_dog = EmojiParser.parseToUnicode(":dog:");
 
@@ -125,7 +126,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     shareContact(update);
                 }
 
-
                 switch (textUpdate) {
                     case START_CMD:
                         sendMessage(chatId, nameUser + GREETING_TEXT);
@@ -135,15 +135,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     case "\uD83D\uDC31 CAT":
                         //что-то сделать
                         isCat = true;
+
                         keyBoardShelter.sendMenu(chatId);
                         sendMessage(chatId, "Вы выбрали кошку, МЯУ:D");
                         break;
                     case "\uD83D\uDC36 DOG":
                         //что-то сделать
+
                         isCat = false;
                         keyBoardShelter.sendMenu(chatId);
                         sendMessage(chatId, "Вы выбрали собаку, ГАВ:D");
                         break;
+
                     case "Главное меню":
                         keyBoardShelter.sendMenu(chatId);
                         break;
@@ -200,6 +203,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 //                sendReplyMessage(chatId, "Ошибка. Я не понимаю это сообщение", messageId);
                 System.out.println("Ошибка");
             }
+
 
 
         });
