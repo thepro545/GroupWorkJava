@@ -83,7 +83,7 @@ public class KeyBoardShelter {
                 new KeyboardButton("Оставить контактные данные").requestContact(true));
         replyKeyboardMarkup.addRow(new KeyboardButton("Позвать волонтера"),
                 new KeyboardButton("Вернуться в меню"));
-        returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Отчет");
+        returnResponseReplyKeyboardMarkup(replyKeyboardMarkup, chatId, "Как взять питомца из приюта");
     }
 
     public void returnResponseReplyKeyboardMarkup(ReplyKeyboardMarkup replyKeyboardMarkup, Long chatId, String text) {
