@@ -4,6 +4,8 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.CopyMessage;
+import com.pengrad.telegrambot.request.ForwardMessage;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
@@ -40,7 +42,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private static final String GREETING_TEXT = ", Приветствую! Чтобы найти то, что тебе нужно - нажми на нужную кнопку";
 
-    private static final String infoAboutShelter = "Наш сайт с информацией \nhttps://google.com \n" +
+    private static final String infoAboutShelterDog = "Наш сайт с информацией о приюте для собак \nhttps://google.com \n" +
+            "Контактные данные \nhttps://yandex.ru\n" +
+            "Общие рекомендации \nhttps://ru.wikipedia.org\n" +
+            "";
+    private static final String infoAboutShelterCat = "Наш сайт с информацией о приюте для кошек \nhttps://google.com \n" +
             "Контактные данные \nhttps://yandex.ru\n" +
             "Общие рекомендации \nhttps://ru.wikipedia.org\n" +
             "";
@@ -51,6 +57,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             "Прочая информация \nhttps://google.com\n" +
             "";
 
+    private static final String infoAboutCats = "Правила знакомства с животным \nhttps://google.com \n" +
+            "Список документов \nhttps://yandex.ru\n" +
+            "Список рекомендаций \nhttps://ru.wikipedia.org\n" +
+            "Прочая информация \nhttps://google.com\n" +
+            "";
     private static final String infoContactsVolonter = "Контактные данные волонтера  \n@thepro545 \n" +
             "Телефон - +7 999 999 99 99 \n";
     private static final String infoAboutReport = "Для отчета нужна следующая информация:\n" +
@@ -67,6 +78,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             "(Самочувствие:)(\\s)(\\W+)(;)\n" +
             "(Поведение:)(\\s)(\\W+)(;)";
 
+    private static final long telegramChatVolunteers = -748879962L;
     @Autowired
     private ReportRepository reportRepository;
     @Autowired
@@ -95,6 +107,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String nameUser = update.message().chat().firstName();
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
+
+            Boolean isCat = false;
 //            String emoji_cat = EmojiParser.parseToUnicode(":cat:");
 //            String emoji_dog = EmojiParser.parseToUnicode(":dog:");
 
@@ -102,7 +116,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             try {
                 //Обработка отчета ( Фото и текст)
-                if (update.message().photo() != null && update.message().caption() != null) {
+                if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
                     getReport(update);
                 }
 
@@ -110,7 +124,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (update.message() != null && update.message().contact() != null) {
                     shareContact(update);
                 }
-
 
 
                 switch (textUpdate) {
@@ -121,11 +134,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
                     case "\uD83D\uDC31 CAT":
                         //что-то сделать
+                        isCat = true;
                         keyBoardShelter.sendMenu(chatId);
                         sendMessage(chatId, "Вы выбрали кошку, МЯУ:D");
                         break;
                     case "\uD83D\uDC36 DOG":
                         //что-то сделать
+                        isCat = false;
                         keyBoardShelter.sendMenu(chatId);
                         sendMessage(chatId, "Вы выбрали собаку, ГАВ:D");
                         break;
@@ -133,14 +148,24 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         keyBoardShelter.sendMenu(chatId);
                         break;
                     case "Узнать информацию о приюте":
-                        keyBoardShelter.sendMenuInfoShelter(chatId);
-                        break;
+                            keyBoardShelter.sendMenuInfoShelter(chatId);
+                            break;
                     case "Информация о приюте":
-                        sendMessage(chatId, infoAboutShelter);
-                        break;
+                        if (isCat = true) {
+                            sendMessage(chatId, infoAboutShelterCat);;
+                            break;
+                        } else {
+                            sendMessage(chatId, infoAboutShelterDog);
+                            break;
+                        }
                     case "Советы и рекомендации":
-                        sendMessage(chatId, infoAboutDogs);
-                        break;
+                        if (isCat = true) {
+                            sendMessage(chatId, infoAboutCats);;
+                            break;
+                        } else {
+                            sendMessage(chatId, infoAboutDogs);
+                            break;
+                        }
                     case "Прислать отчет о питомце":
                         sendMessage(chatId, infoAboutReport);
                         sendMessage(chatId, reportExample);
@@ -157,12 +182,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             break;
                         }
                     case "Позвать волонтера":
-                        sendMessage(chatId, infoContactsVolonter);
-                        break;
-
-                    case "null":
-                        System.out.println("Нельзя");
-                        sendMessage(chatId, "Я не знаю такой команды(NULL)");
+                        sendMessage(chatId, "Мы передали ваше сообщение волонтерам. Если у вас закрытый профиль - поделитесь контактом. Справа сверху 3 точки - поделиться контактом");
+                        sendForwardMessage(chatId, messageId);
                         break;
                     case "":
                         System.out.println("Нельзя");
@@ -179,7 +200,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
 
 
-
         });
 
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
@@ -189,6 +209,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         SendMessage sendMessage = new SendMessage(chatId, messageText);
         sendMessage.replyToMessageId(messageId);
         telegramBot.execute(sendMessage);
+    }
+
+    public void sendForwardMessage(Long chatId, Integer messageId) {
+        ForwardMessage forwardMessage = new ForwardMessage(telegramChatVolunteers, chatId, messageId);
+        telegramBot.execute(forwardMessage);
     }
 
 //    public void sendMessage(NotificationTask task) {
@@ -221,8 +246,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
             personRepository.save(new Person(firstName, phone, finalChatId));
             sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
+            sendMessage(telegramChatVolunteers, phone + " " + firstName + " Добавил свой номер в базу");
+            sendForwardMessage(finalChatId, update.message().messageId());
         }
     }
+
 
 
     public void getReport(Update update) {
