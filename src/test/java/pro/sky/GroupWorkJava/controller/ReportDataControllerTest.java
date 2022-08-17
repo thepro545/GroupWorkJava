@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pro.sky.GroupWorkJava.model.ReportData;
-import pro.sky.GroupWorkJava.service.PhotoReportService;
+import pro.sky.GroupWorkJava.service.ReportDataService;
 
 import java.io.*;
 import java.util.Objects;
@@ -19,15 +19,15 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(PhotoReportController.class)
-class PhotoReportControllerTest {
+@WebMvcTest(ReportDataController.class)
+class ReportDataControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    @Qualifier("photoReportService")
-    private PhotoReportService photoReportService;
+    @Qualifier("reportDataService")
+    private ReportDataService reportDataService;
 
     @Test
     void downloadReport() throws Exception {
@@ -36,14 +36,14 @@ class PhotoReportControllerTest {
         ReportData reportData = new ReportData();
         reportData.setHealth(health);
         reportData.setRation(ration);
-        when(photoReportService.findPhotoReport(anyLong())).thenReturn(reportData);
+        when(reportDataService.findById(anyLong())).thenReturn(reportData);
 
         mockMvc.perform(
                         get("/photoReports/{id}/check", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.health").value(health))
                 .andExpect(jsonPath("$.ration").value(ration));
-        verify(photoReportService).findPhotoReport(1L);
+        verify(reportDataService).findById(1L);
     }
 
     @Test
@@ -54,13 +54,13 @@ class PhotoReportControllerTest {
         byte[] data = Objects.requireNonNull(is).readAllBytes();
         reportData.setData(data);
 
-        when(photoReportService.findPhotoReport(anyLong())).thenReturn(reportData);
+        when(reportDataService.findById(anyLong())).thenReturn(reportData);
         mockMvc.perform(
                         get("/photoReports/{id}/photo-from-db", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().bytes(data))
                 .andExpect(content().contentType(fileType));
-        verify(photoReportService).findPhotoReport(1L);
+        verify(reportDataService).findById(1L);
     }
 
     @Test
@@ -72,12 +72,12 @@ class PhotoReportControllerTest {
         InputStream is = getClass().getClassLoader().getResourceAsStream("pet.jpeg");
         byte[] data = Objects.requireNonNull(is).readAllBytes();
 
-        when(photoReportService.findPhotoReport(anyLong())).thenReturn(reportData);
+        when(reportDataService.findById(anyLong())).thenReturn(reportData);
         mockMvc.perform(
                         get("/photoReports/{id}/photo-from-file", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().bytes(data))
                 .andExpect(content().contentType(fileType));
-        verify(photoReportService).findPhotoReport(1L);
+        verify(reportDataService).findById(1L);
     }
 }

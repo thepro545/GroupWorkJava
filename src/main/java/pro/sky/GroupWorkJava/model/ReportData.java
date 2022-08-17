@@ -1,15 +1,12 @@
 package pro.sky.GroupWorkJava.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
-
+@Table(name="report_data")
 public class ReportData {
     @Id
     @GeneratedValue

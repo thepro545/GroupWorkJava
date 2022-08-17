@@ -1,15 +1,15 @@
 package pro.sky.GroupWorkJava.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name="dog")
-public class Dog {
+@Table(name="cat")
+public class Cat {
+
     @Id
     @GeneratedValue
     private long id;
@@ -18,19 +18,8 @@ public class Dog {
     private int yearOfBirth;
     private String description;
 
-    public Dog(){
+    public Cat() {
 
-    }
-
-    @Override
-    public String toString() {
-        return "Dog{" +
-                "id=" + id +
-                ", breed='" + breed + '\'' +
-                ", name='" + name + '\'' +
-                ", yearOfBirth=" + yearOfBirth +
-                ", description='" + description + '\'' +
-                '}';
     }
 
     public long getId() {
@@ -74,11 +63,22 @@ public class Dog {
     }
 
     @Override
+    public String toString() {
+        return "Dog{" +
+                "id=" + id +
+                ", breed='" + breed + '\'' +
+                ", name='" + name + '\'' +
+                ", yearOfBirth=" + yearOfBirth +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Dog dog = (Dog) o;
-        return id == dog.id && yearOfBirth == dog.yearOfBirth && Objects.equals(breed, dog.breed) && Objects.equals(name, dog.name);
+        Cat cat = (Cat) o;
+        return id == cat.id && yearOfBirth == cat.yearOfBirth && Objects.equals(breed, cat.breed) && Objects.equals(name, cat.name);
     }
 
     @Override

@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-
+@Table(name="person")
 public class Person {
     @Id
     @GeneratedValue
@@ -19,10 +19,17 @@ public class Person {
 
     private Long chatId;
 
+    private Status status;
+
     @JsonBackReference
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dog_id")
     private Dog dog;
+
+    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cat_id")
+    private Cat cat;
 
     @OneToOne(orphanRemoval = true)
     @JoinTable(name = "person_report_data",
@@ -76,11 +83,23 @@ public class Person {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", yearOfBirth=" + yearOfBirth +
-                ", phone=" + phone +
+                ", phone='" + phone + '\'' +
                 ", mail='" + mail + '\'' +
                 ", address='" + address + '\'' +
+                ", chatId=" + chatId +
+                ", status=" + status +
                 ", dog=" + dog +
+                ", cat=" + cat +
+                ", reportData=" + reportData +
                 '}';
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public String getName() {

@@ -16,8 +16,8 @@ import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
 import pro.sky.GroupWorkJava.model.Person;
 
 import pro.sky.GroupWorkJava.repository.PersonRepository;
-import pro.sky.GroupWorkJava.repository.ReportRepository;
-import pro.sky.GroupWorkJava.service.PhotoReportService;
+import pro.sky.GroupWorkJava.repository.ReportDataRepository;
+import pro.sky.GroupWorkJava.service.ReportDataService;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import com.vdurmont.emoji.EmojiParser;
 
 
 @Service
@@ -68,13 +66,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             "(Поведение:)(\\s)(\\W+)(;)";
 
     @Autowired
-    private ReportRepository reportRepository;
+    private ReportDataRepository reportRepository;
     @Autowired
     private PersonRepository personRepository;
     @Autowired
     private KeyBoardShelter keyBoardShelter;
     @Autowired
-    private PhotoReportService photoReportService;
+    private ReportDataService reportDataService;
     @Autowired
     private TelegramBot telegramBot;
 
@@ -244,7 +242,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 long timeDate = update.message().date();
                 Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
-                photoReportService.uploadPhoto(update.message().chat().id(), fileContent, file,
+                //TODO указываем чат айди, но ищем в базе по айди отчета
+                reportDataService.uploadReportData(update.message().chat().id(), fileContent, file,
                         ration, health, habits, fullPathPhoto, dateSendMessage);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
@@ -263,7 +262,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 long timeDate = update.message().date();
                 Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
-                photoReportService.uploadPhoto(update.message().chat().id(), fileContent, file, update.message().caption(),
+                //TODO указываем чат айди, но ищем в базе по айди отчета
+                reportDataService.uploadReportData(update.message().chat().id(), fileContent, file, update.message().caption(),
                         fullPathPhoto, dateSendMessage);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
