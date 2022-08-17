@@ -249,7 +249,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
             personRepository.save(new Person(firstName, phone, finalChatId));
             sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
-            sendMessage(telegramChatVolunteers, phone + " " + firstName + " Добавил свой номер в базу");
+            sendMessage(telegramChatVolunteers, phone + " " + firstName + " Добавил(а) свой номер в базу");
             sendForwardMessage(finalChatId, update.message().messageId());
         }
     }
