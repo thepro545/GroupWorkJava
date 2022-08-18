@@ -11,6 +11,8 @@ import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
 import pro.sky.GroupWorkJava.model.PersonDog;
@@ -109,7 +111,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String nameUser = update.message().chat().firstName();
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
-
+            checkReport();
 //            String emoji_cat = EmojiParser.parseToUnicode(":cat:");
 //            String emoji_dog = EmojiParser.parseToUnicode(":dog:");
 
@@ -153,8 +155,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         keyBoardShelter.sendMenu(chatId);
                         break;
                     case "Узнать информацию о приюте":
-                            keyBoardShelter.sendMenuInfoShelter(chatId);
-                            break;
+                        keyBoardShelter.sendMenuInfoShelter(chatId);
+                        break;
                     case "Информация о приюте":
                         if (isCat) {
                             sendMessage(chatId, infoAboutShelterCat);
@@ -164,7 +166,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         break;
                     case "Советы и рекомендации":
                         if (isCat) {
-                            sendMessage(chatId, infoAboutCats);;
+                            sendMessage(chatId, infoAboutCats);
+                            ;
                             break;
                         } else {
                             sendMessage(chatId, infoAboutDogs);
@@ -201,14 +204,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     default:
                         sendReplyMessage(chatId, "Я не знаю такой команды", messageId);
                         break;
-
                 }
             } catch (NullPointerException e) {
 //                sendReplyMessage(chatId, "Ошибка. Я не понимаю это сообщение", messageId);
                 System.out.println("Ошибка");
             }
-
-
 
         });
 
@@ -264,7 +264,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
 
-
     public void getReport(Update update) {
         Pattern pattern = Pattern.compile(REGEX_MESSAGE);
         Matcher matcher = pattern.matcher(update.message().caption());
@@ -313,5 +312,28 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
 
         }
+
+    }
+
+
+    @Query(nativeQuery = true, value = "WITH cte AS\n" +
+            "         (\n" +
+            "                 SELECT *,\n" +
+            "         ROW_NUMBER() OVER (PARTITION BY chat_id ORDER BY last_messagems DESC) AS rn\n" +
+            "    FROM report_data\n" +
+            "         )\n" +
+            "    SELECT *\n" +
+            "    FROM cte\n" +
+            "    WHERE rn = 1")
+    //@Scheduled(cron = "0 0/1 * * * *")
+    @Scheduled(cron = "49 21  0/1 * * *")
+    public void checkReport() {
+        var nowTime = new Date().getTime();
+        var twoDay = 172800000;
+        reportRepository.findAll().stream().filter(i -> i.getCheckReport() == true)
+                .filter(i -> i.getLastMessageMS()  < nowTime)
+                .forEach(s -> sendMessage(s.getChatId(), "вы забыли присласть отчет"));
+        System.out.println("111");
+        System.out.println(nowTime);
     }
 }
