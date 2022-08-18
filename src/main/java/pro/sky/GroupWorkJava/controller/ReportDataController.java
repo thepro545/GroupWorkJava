@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -36,11 +35,6 @@ public class ReportDataController {
     @GetMapping("/{id}/report")
     public ReportData downloadReport(@PathVariable Long id) {
         return reportDataService.findById(id);
-    }
-
-    @PostMapping()
-    public void save(@RequestBody ReportData report) {
-        reportDataService.save(report);
     }
 
     @DeleteMapping("/{id}")

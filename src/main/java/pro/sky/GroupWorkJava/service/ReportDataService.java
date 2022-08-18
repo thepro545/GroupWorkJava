@@ -29,29 +29,27 @@ public class ReportDataService {
     public void uploadReportData(Long personId, byte[] pictureFile, File file, String ration, String health,
                                  String habits, String filePath, Date dateSendMessage) throws IOException {
 
-        ReportData photo = findById(personId);
-        photo.setLastMessage(dateSendMessage);
-        photo.setFilePath(filePath);
-        photo.setFileSize(file.fileSize());
-        photo.setData(pictureFile);
-        photo.setChatId(personId);
-        photo.setRation(ration);
-        photo.setHealth(health);
-        photo.setHabits(habits);
-        reportRepository.save(photo);
+        ReportData report = reportRepository.findByChatId(personId);
+        report.setLastMessage(dateSendMessage);
+        report.setFilePath(filePath);
+        report.setFileSize(file.fileSize());
+        report.setData(pictureFile);
+        report.setRation(ration);
+        report.setHealth(health);
+        report.setHabits(habits);
+        reportRepository.save(report);
     }
 
     public void uploadReportData(Long personId, byte[] pictureFile, File file,
                                  String caption, String filePath, Date dateSendMessage) throws IOException {
 
-        ReportData photo = findById(personId);
-        photo.setLastMessage(dateSendMessage);
-        photo.setFilePath(filePath);
-        photo.setFileSize(file.fileSize());
-        photo.setData(pictureFile);
-        photo.setChatId(personId);
-        photo.setCaption(caption);
-        reportRepository.save(photo);
+        ReportData report = reportRepository.findByChatId(personId);
+        report.setLastMessage(dateSendMessage);
+        report.setFilePath(filePath);
+        report.setFileSize(file.fileSize());
+        report.setData(pictureFile);
+        report.setCaption(caption);
+        reportRepository.save(report);
     }
 
     public ReportData findById(Long id) {

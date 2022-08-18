@@ -35,6 +35,10 @@ public class ReportData {
 
     private Date lastMessage;
 
+    private Long lastMessageMS;
+
+    private boolean checkReport = true;
+
     public ReportData() {
 
     }
@@ -59,6 +63,21 @@ public class ReportData {
         this.habits = habits;
     }
 
+    public boolean isCheckReport() {
+        return checkReport;
+    }
+
+    public void setCheckReport(boolean checkReport) {
+        checkReport = checkReport;
+    }
+
+    public Long getLastMessageMS() {
+        return lastMessageMS;
+    }
+
+    public void setLastMessageMS(Long lastMessageMs) {
+        this.lastMessageMS = lastMessageMs;
+    }
 
     public Date getLastMessage() {
         return lastMessage;
