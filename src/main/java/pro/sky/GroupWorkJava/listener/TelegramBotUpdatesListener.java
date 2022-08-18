@@ -4,20 +4,18 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.CopyMessage;
 import com.pengrad.telegrambot.request.ForwardMessage;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
-import com.pengrad.telegrambot.response.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
-import pro.sky.GroupWorkJava.model.Person;
+import pro.sky.GroupWorkJava.model.PersonDog;
 
-import pro.sky.GroupWorkJava.repository.PersonRepository;
+import pro.sky.GroupWorkJava.repository.PersonDogRepository;
 import pro.sky.GroupWorkJava.repository.ReportDataRepository;
 import pro.sky.GroupWorkJava.service.ReportDataService;
 
@@ -84,7 +82,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Autowired
     private ReportDataRepository reportRepository;
     @Autowired
-    private PersonRepository personRepository;
+    private PersonDogRepository personDogRepository;
     @Autowired
     private KeyBoardShelter keyBoardShelter;
     @Autowired
@@ -245,7 +243,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String phone = update.message().contact().phoneNumber();
             String username = update.message().chat().username();
             long finalChatId = update.message().chat().id();
-            var sortChatId = personRepository.findAll().stream().filter(i -> i.getChatId() == finalChatId)
+            var sortChatId = personDogRepository.findAll().stream().filter(i -> i.getChatId() == finalChatId)
                     .collect(Collectors.toList());
             if (!sortChatId.isEmpty()) {
                 sendMessage(finalChatId, "Вы уже в базе");
@@ -253,11 +251,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
             if (lastName != null) {
                 String name = firstName + " " + lastName + " " + username;
-                personRepository.save(new Person(name, phone, finalChatId));
+                personDogRepository.save(new PersonDog(name, phone, finalChatId));
                 sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
                 return;
             }
-            personRepository.save(new Person(firstName, phone, finalChatId));
+            personDogRepository.save(new PersonDog(firstName, phone, finalChatId));
             sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
             //
             sendMessage(telegramChatVolunteers, phone + " " + firstName + " Добавил(а) свой номер в базу");
@@ -286,7 +284,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 long timeDate = update.message().date();
                 Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
-                //TODO указываем чат айди, но ищем в базе по айди отчета
                 reportDataService.uploadReportData(update.message().chat().id(), fileContent, file,
                         ration, health, habits, fullPathPhoto, dateSendMessage);
 
@@ -306,7 +303,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 long timeDate = update.message().date();
                 Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
-                //TODO указываем чат айди, но ищем в базе по айди отчета
                 reportDataService.uploadReportData(update.message().chat().id(), fileContent, file, update.message().caption(),
                         fullPathPhoto, dateSendMessage);
 

@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Person {
+public class PersonDog {
     @Id
     @GeneratedValue
     private long id;
@@ -25,11 +25,6 @@ public class Person {
     @JoinColumn(name = "dog_id")
     private Dog dog;
 
-    @JsonBackReference
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cat_id")
-    private Cat cat;
-
     @OneToOne(orphanRemoval = true)
     @JoinTable(name = "person_report_data",
             joinColumns = @JoinColumn(name = "person_null"),
@@ -44,16 +39,16 @@ public class Person {
         this.reportData = reportData;
     }
 
-    public Person() {
+    public PersonDog() {
     }
 
-    public Person(String name, String phone, Long chatId) {
+    public PersonDog(String name, String phone, Long chatId) {
         this.name = name;
         this.phone = phone;
         this.chatId = chatId;
     }
 
-    public Person(int id, String name, int yearOfBirth, String phone, String mail, String address, Long chatId) {
+    public PersonDog(int id, String name, int yearOfBirth, String phone, String mail, String address, Long chatId) {
         this.id = id;
         this.name = name;
         this.yearOfBirth = yearOfBirth;
@@ -68,8 +63,8 @@ public class Person {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return id == person.id && yearOfBirth == person.yearOfBirth && phone == person.phone && Objects.equals(name, person.name) && Objects.equals(mail, person.mail) && Objects.equals(address, person.address);
+        PersonDog personDog = (PersonDog) o;
+        return id == personDog.id && yearOfBirth == personDog.yearOfBirth && phone == personDog.phone && Objects.equals(name, personDog.name) && Objects.equals(mail, personDog.mail) && Objects.equals(address, personDog.address);
     }
 
     @Override
@@ -89,7 +84,6 @@ public class Person {
                 ", chatId=" + chatId +
                 ", status=" + status +
                 ", dog=" + dog +
-                ", cat=" + cat +
                 ", reportData=" + reportData +
                 '}';
     }

@@ -29,7 +29,7 @@ public class ReportData {
     private byte[] data;
 
     @OneToOne
-    private Person person;
+    private PersonDog personDog;
 
     private String caption;
 
@@ -165,7 +165,7 @@ public class ReportData {
                 ", filePath='" + filePath + '\'' +
                 ", fileSize=" + fileSize +
                 ", data=" + Arrays.toString(data) +
-                ", person=" + person +
+                ", person=" + personDog +
                 '}';
     }
 }
