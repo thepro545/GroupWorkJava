@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author Maxon4ik
@@ -43,7 +43,7 @@ public class ReportDataController {
     }
 
     @GetMapping("getAll")
-    public ResponseEntity<List<ReportData>> getAll() {
+    public ResponseEntity<Collection<ReportData>> getAll() {
         return ResponseEntity.ok(reportDataService.getAll());
     }
 

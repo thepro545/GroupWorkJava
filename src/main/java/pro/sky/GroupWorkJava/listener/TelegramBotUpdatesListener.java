@@ -168,6 +168,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     case "Советы и рекомендации":
                         if (isCat) {
                             sendMessage(chatId, infoAboutCats);
+                            ;
                             break;
                         } else {
                             sendMessage(chatId, infoAboutDogs);
@@ -284,7 +285,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
                 reportDataService.uploadReportData(update.message().chat().id(), fileContent, file,
-                        ration, health, habits, fullPathPhoto, dateSendMessage);
+                        ration, health, habits, fullPathPhoto, dateSendMessage, timeDate);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
                 System.out.println("Отчет успешно принят от: " + update.message().chat().id());
@@ -303,7 +304,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
                 reportDataService.uploadReportData(update.message().chat().id(), fileContent, file, update.message().caption(),
-                        fullPathPhoto, dateSendMessage);
+                        fullPathPhoto, dateSendMessage, timeDate);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
                 System.out.println("Отчет успешно принят от: " + update.message().chat().id());
@@ -319,7 +320,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Query(nativeQuery = true, value = "WITH cte AS\n" +
             "         (\n" +
             "                 SELECT *,\n" +
-            "         ROW_NUMBER() OVER (PARTITION BY chat_id ORDER BY last_messagems DESC) AS rn\n" +
+            "         ROW_NUMBER() OVER (PARTITION BY chat_id ORDER BY last_message_ms DESC) AS rn\n" +
             "    FROM report_data\n" +
             "         )\n" +
             "    SELECT *\n" +
@@ -329,6 +330,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Scheduled(cron = "49 21  0/1 * * *")
     public void checkReport() {
         var nowTime = new Date().getTime();
+        var twoDay = 172800000;
         reportRepository.findAll().stream().filter(ReportData::isCheckReport)
                 .filter(i -> i.getLastMessageMS() < nowTime)
                 .forEach(s -> sendMessage(s.getChatId(), "вы забыли присласть отчет"));

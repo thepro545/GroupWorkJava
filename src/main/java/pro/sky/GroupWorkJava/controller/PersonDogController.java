@@ -22,13 +22,13 @@ public class PersonDogController {
         return service.getById(id);
     }
 
-    @PostMapping()
+    @PostMapping
     public void save(@RequestBody PersonDog personDog) {
         service.create(personDog);
     }
 
     @PutMapping
-    public ResponseEntity<PersonDog> updateFaculty(@RequestBody PersonDog personDog) {
+    public ResponseEntity<PersonDog> update(@RequestBody PersonDog personDog) {
         PersonDog personDogDelete = service.create(personDog);
         if (personDogDelete == null) {
             return ResponseEntity.notFound().build();

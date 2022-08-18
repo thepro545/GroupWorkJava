@@ -27,12 +27,14 @@ public class ReportDataService {
     }
 
     public void uploadReportData(Long personId, byte[] pictureFile, File file, String ration, String health,
-                                 String habits, String filePath, Date dateSendMessage) throws IOException {
+                                 String habits, String filePath, Date dateSendMessage, Long timeDate) throws IOException {
 
-        ReportData report = reportRepository.findByChatId(personId);
+        ReportData report = findById(personId);
         report.setLastMessage(dateSendMessage);
         report.setFilePath(filePath);
         report.setFileSize(file.fileSize());
+        report.setLastMessageMS(timeDate);
+        report.setChatId(personId);
         report.setData(pictureFile);
         report.setRation(ration);
         report.setHealth(health);
@@ -41,19 +43,29 @@ public class ReportDataService {
     }
 
     public void uploadReportData(Long personId, byte[] pictureFile, File file,
-                                 String caption, String filePath, Date dateSendMessage) throws IOException {
+                                 String caption, String filePath, Date dateSendMessage, Long timeDate) throws IOException {
 
-        ReportData report = reportRepository.findByChatId(personId);
+        ReportData report = findById(personId);
         report.setLastMessage(dateSendMessage);
         report.setFilePath(filePath);
+        report.setChatId(personId);
         report.setFileSize(file.fileSize());
         report.setData(pictureFile);
         report.setCaption(caption);
+        report.setLastMessageMS(timeDate);
         reportRepository.save(report);
     }
 
     public ReportData findById(Long id) {
         return reportRepository.findById(id).orElse(new ReportData());
+    }
+
+    public ReportData findByChatId(Long chatId) {
+        return reportRepository.findByChatId(chatId);
+    }
+
+    public Collection<ReportData> findListByChatId(Long chatId){
+        return reportRepository.findListByChatId(chatId);
     }
 
     public ReportData save(ReportData report){
