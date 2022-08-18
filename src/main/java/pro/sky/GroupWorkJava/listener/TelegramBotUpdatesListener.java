@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.KeyBoard.KeyBoardShelter;
 import pro.sky.GroupWorkJava.model.PersonDog;
 
+import pro.sky.GroupWorkJava.model.ReportData;
 import pro.sky.GroupWorkJava.repository.PersonDogRepository;
 import pro.sky.GroupWorkJava.repository.ReportDataRepository;
 import pro.sky.GroupWorkJava.service.ReportDataService;
@@ -167,7 +168,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     case "Советы и рекомендации":
                         if (isCat) {
                             sendMessage(chatId, infoAboutCats);
-                            ;
                             break;
                         } else {
                             sendMessage(chatId, infoAboutDogs);
@@ -329,9 +329,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Scheduled(cron = "49 21  0/1 * * *")
     public void checkReport() {
         var nowTime = new Date().getTime();
-        var twoDay = 172800000;
-        reportRepository.findAll().stream().filter(i -> i.getCheckReport() == true)
-                .filter(i -> i.getLastMessageMS()  < nowTime)
+        reportRepository.findAll().stream().filter(ReportData::isCheckReport)
+                .filter(i -> i.getLastMessageMS() < nowTime)
                 .forEach(s -> sendMessage(s.getChatId(), "вы забыли присласть отчет"));
         System.out.println("111");
         System.out.println(nowTime);

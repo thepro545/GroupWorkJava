@@ -2,7 +2,6 @@ package pro.sky.GroupWorkJava.service;
 
 import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.model.Dog;
-import pro.sky.GroupWorkJava.model.ReportData;
 import pro.sky.GroupWorkJava.repository.DogRepository;
 
 import java.util.Collection;
