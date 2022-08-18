@@ -53,7 +53,8 @@ public class Person {
         this.chatId = chatId;
     }
 
-    public Person(String name, int yearOfBirth, String phone, String mail, String address, Long chatId) {
+    public Person(int id, String name, int yearOfBirth, String phone, String mail, String address, Long chatId) {
+        this.id = id;
         this.name = name;
         this.yearOfBirth = yearOfBirth;
         this.phone = phone;

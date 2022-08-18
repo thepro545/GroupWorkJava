@@ -1,5 +1,6 @@
 package pro.sky.GroupWorkJava.service;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.pengrad.telegrambot.model.File;
 import pro.sky.GroupWorkJava.model.ReportData;
@@ -7,7 +8,9 @@ import pro.sky.GroupWorkJava.repository.ReportDataRepository;
 
 import javax.transaction.Transactional;
 import java.io.*;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Maxon4ik
@@ -63,6 +66,14 @@ public class ReportDataService {
         reportRepository.deleteById(id);
     }
 
+    public List<ReportData> getAll() {
+        return reportRepository.findAll();
+    }
+
+    public List<ReportData> getAllReports(Integer pageNumber, Integer pageSize){
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        return reportRepository.findAll(pageRequest).getContent();
+    }
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }

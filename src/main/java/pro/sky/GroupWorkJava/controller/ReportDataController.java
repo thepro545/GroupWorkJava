@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Maxon4ik
@@ -44,6 +46,11 @@ public class ReportDataController {
     @DeleteMapping("/{id}")
     public void remove(@PathVariable Long id) {
         reportDataService.remove(id);
+    }
+
+    @GetMapping("getAll")
+    public ResponseEntity<List<ReportData>> getAll() {
+        return ResponseEntity.ok(reportDataService.getAll());
     }
 
     @GetMapping("/{id}/photo-from-db")

@@ -2,7 +2,10 @@ package pro.sky.GroupWorkJava.service;
 
 import org.springframework.stereotype.Service;
 import pro.sky.GroupWorkJava.model.Dog;
+import pro.sky.GroupWorkJava.model.ReportData;
 import pro.sky.GroupWorkJava.repository.DogRepository;
+
+import java.util.Collection;
 
 @Service
 public class DogService {
@@ -23,5 +26,9 @@ public class DogService {
 
     public void removeById(Long id) {
         repository.deleteById(id);
+    }
+
+    public Collection<Dog> getAll() {
+        return repository.findAll();
     }
 }
