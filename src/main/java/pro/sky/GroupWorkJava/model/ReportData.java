@@ -11,6 +11,7 @@ public class ReportData {
     @GeneratedValue
     private long id;
 
+//    private static int daysOfReport = 1;
     private Long chatId;
 
     private String ration;
@@ -19,7 +20,7 @@ public class ReportData {
 
     private String habits;
 
-    private Integer days;
+    private Integer days = 1;
 
     private String filePath;
 
@@ -169,6 +170,7 @@ public class ReportData {
 
     public void setDays(Integer days) {
         this.days = days;
+//        daysOfReport++;
     }
 
     @Override

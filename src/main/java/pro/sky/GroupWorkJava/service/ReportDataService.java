@@ -27,10 +27,11 @@ public class ReportDataService {
     }
 
     public void uploadReportData(Long personId, byte[] pictureFile, File file, String ration, String health,
-                                 String habits, String filePath, Date dateSendMessage, Long timeDate) throws IOException {
+                                 String habits, String filePath, Date dateSendMessage, Long timeDate, int daysOfReports) throws IOException {
 
         ReportData report = findById(personId);
         report.setLastMessage(dateSendMessage);
+        report.setDays(daysOfReports);
         report.setFilePath(filePath);
         report.setFileSize(file.fileSize());
         report.setLastMessageMS(timeDate);
@@ -43,10 +44,11 @@ public class ReportDataService {
     }
 
     public void uploadReportData(Long personId, byte[] pictureFile, File file,
-                                 String caption, String filePath, Date dateSendMessage, Long timeDate) throws IOException {
+                                 String caption, String filePath, Date dateSendMessage, Long timeDate, int daysOfReports) throws IOException {
 
         ReportData report = findById(personId);
         report.setLastMessage(dateSendMessage);
+        report.setDays(daysOfReports);
         report.setFilePath(filePath);
         report.setChatId(personId);
         report.setFileSize(file.fileSize());

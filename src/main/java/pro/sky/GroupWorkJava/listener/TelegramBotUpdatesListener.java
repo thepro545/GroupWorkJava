@@ -24,8 +24,7 @@ import pro.sky.GroupWorkJava.service.ReportDataService;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -82,6 +81,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             "(Поведение:)(\\s)(\\W+)(;)";
 
     private static final long telegramChatVolunteers = -748879962L;
+
+    private int daysOfReports = 1;
     @Autowired
     private ReportDataRepository reportRepository;
     @Autowired
@@ -112,17 +113,39 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String nameUser = update.message().chat().firstName();
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
-            checkReport();
 //            String emoji_cat = EmojiParser.parseToUnicode(":cat:");
 //            String emoji_dog = EmojiParser.parseToUnicode(":dog:");
-
             long chatId = update.message().chat().id();
+            Calendar calendar = new GregorianCalendar();
 
             try {
+                long compareTime = calendar.get(Calendar.DAY_OF_MONTH);
 
-                //Обработка отчета ( Фото и текст)
-                if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
-                    getReport(update);
+                Long lastMessageTime = reportRepository.findAll().stream()
+                        .filter(s -> s.getChatId() == chatId)
+
+                        .map(ReportData::getLastMessageMS).max(Long::compare).orElseGet(() -> null);
+                if (lastMessageTime != null) {
+                    Date lastDateSendMessage = new Date(lastMessageTime * 1000);
+                    long numberOfDay = lastDateSendMessage.getDate();
+
+                    if (daysOfReports < 30) {
+                        if (compareTime != numberOfDay) {
+                            //Обработка отчета ( Фото и текст)
+                            if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
+                                getReport(update);
+                            }
+                        } else {
+                            sendMessage(chatId, "Вы уже отправляли отчет сегодня");
+                        }
+                        if (daysOfReports == 31) {
+                            sendMessage(chatId, "Вы прошли испытательный срок!");
+                        }
+                    }
+                } else {
+                    if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
+                        getReport(update);
+                    }
                 }
 
                 // Добавление имени и телефона в базу через кнопку оставить контакты
@@ -258,7 +281,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
             personDogRepository.save(new PersonDog(firstName, phone, finalChatId));
             sendMessage(finalChatId, "Вас успешно добавили в базу. Скоро вам перезвонят.");
-            //
+            // Сообщение в чат волонтерам
             sendMessage(telegramChatVolunteers, phone + " " + firstName + " Добавил(а) свой номер в базу");
             sendForwardMessage(finalChatId, update.message().messageId());
         }
@@ -285,9 +308,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
                 reportDataService.uploadReportData(update.message().chat().id(), fileContent, file,
-                        ration, health, habits, fullPathPhoto, dateSendMessage, timeDate);
+                        ration, health, habits, fullPathPhoto, dateSendMessage, timeDate, daysOfReports++);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
+
                 System.out.println("Отчет успешно принят от: " + update.message().chat().id());
             } catch (IOException e) {
                 System.out.println("Ошибка загрузки фото");
@@ -304,7 +328,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Date dateSendMessage = new Date(timeDate * 1000);
                 byte[] fileContent = telegramBot.getFileContent(file);
                 reportDataService.uploadReportData(update.message().chat().id(), fileContent, file, update.message().caption(),
-                        fullPathPhoto, dateSendMessage, timeDate);
+                        fullPathPhoto, dateSendMessage, timeDate, daysOfReports++);
 
                 telegramBot.execute(new SendMessage(update.message().chat().id(), "Отчет успешно принят"));
                 System.out.println("Отчет успешно принят от: " + update.message().chat().id());
@@ -326,14 +350,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             "    SELECT *\n" +
             "    FROM cte\n" +
             "    WHERE rn = 1")
-    //@Scheduled(cron = "0 0/1 * * * *")
-    @Scheduled(cron = "49 21  0/1 * * *")
+    @Scheduled(cron = "14 15 * * * *")
     public void checkReport() {
         var nowTime = new Date().getTime();
         var twoDay = 172800000;
-        reportRepository.findAll().stream().filter(ReportData::isCheckReport)
-                .filter(i -> i.getLastMessageMS() < nowTime)
-                .forEach(s -> sendMessage(s.getChatId(), "вы забыли присласть отчет"));
+        reportRepository.findAll().stream()
+                .filter(i -> i.getLastMessageMS() + twoDay < nowTime)
+                .forEach(s -> sendMessage(s.getChatId(), "Вы забыли прислать отчет"));
         System.out.println("111");
         System.out.println(nowTime);
     }
