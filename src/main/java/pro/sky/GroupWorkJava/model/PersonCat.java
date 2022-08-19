@@ -13,7 +13,7 @@ import java.util.Objects;
 public class PersonCat {
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     private String name;
     private int yearOfBirth;
     private String phone;
@@ -52,7 +52,7 @@ public class PersonCat {
         this.chatId = chatId;
     }
 
-    public PersonCat(int id, String name, int yearOfBirth, String phone, String mail, String address, Long chatId) {
+    public PersonCat(Long id, String name, int yearOfBirth, String phone, String mail, String address, Long chatId) {
         this.id = id;
         this.name = name;
         this.yearOfBirth = yearOfBirth;
@@ -90,6 +90,14 @@ public class PersonCat {
                 ", cat=" + cat +
                 ", reportData=" + reportData +
                 '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Status getStatus() {

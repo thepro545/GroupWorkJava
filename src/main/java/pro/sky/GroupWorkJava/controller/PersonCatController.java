@@ -1,6 +1,5 @@
 package pro.sky.GroupWorkJava.controller;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.GroupWorkJava.model.PersonCat;
 import pro.sky.GroupWorkJava.service.PersonCatService;
@@ -12,7 +11,7 @@ import java.util.Collection;
  * @date 18.08.2022 20:26
  */
 @RestController
-@RequestMapping("personCat")
+@RequestMapping("person-cat")
 public class PersonCatController {
 
     private final PersonCatService service;
@@ -27,17 +26,13 @@ public class PersonCatController {
     }
 
     @PostMapping()
-    public void save(@RequestBody PersonCat personDog) {
-        service.create(personDog);
+    public PersonCat save(@RequestBody PersonCat personCat) {
+        return service.create(personCat);
     }
 
     @PutMapping
-    public ResponseEntity<PersonCat> updateFaculty(@RequestBody PersonCat personDog) {
-        PersonCat personCatDelete = service.create(personDog);
-        if (personCatDelete == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(personCatDelete);
+    public PersonCat update(@RequestBody PersonCat personCat) {
+        return service.update(personCat);
     }
 
     @DeleteMapping("{id}")
@@ -45,11 +40,11 @@ public class PersonCatController {
         service.removeById(id);
     }
 
-    @GetMapping("getAll")
-    public ResponseEntity<Collection<PersonCat>> getAll(@RequestParam(required = false) Long chatId) {
+    @GetMapping("all")
+    public Collection<PersonCat> getAll(@RequestParam(required = false) Long chatId) {
         if (chatId != null) {
-            return ResponseEntity.ok(service.getByChatId(chatId));
+            return service.getByChatId(chatId);
         }
-        return ResponseEntity.ok(service.getAll());
+        return service.getAll();
     }
 }

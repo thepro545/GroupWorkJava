@@ -1,6 +1,5 @@
 package pro.sky.GroupWorkJava.controller;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.GroupWorkJava.model.Cat;
 import pro.sky.GroupWorkJava.service.CatService;
@@ -27,13 +26,18 @@ public class CatController {
         return service.create(cat);
     }
 
+    @PutMapping()
+    public Cat update(@RequestBody Cat cat) {
+        return service.update(cat);
+    }
+
     @DeleteMapping("{id}")
     public void remove(@PathVariable Long id) {
         service.removeById(id);
     }
 
-    @GetMapping("getAll")
-    public ResponseEntity<Collection<Cat>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    @GetMapping("all")
+    public Collection<Cat> getAll() {
+        return service.getAll();
     }
 }
