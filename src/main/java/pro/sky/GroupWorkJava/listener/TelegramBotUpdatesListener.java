@@ -356,23 +356,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     }
 
-    @Scheduled(cron = "0 30 21 * * *")
-    @Query(nativeQuery = true, value = "WITH cte AS\n" +
-            "         (\n" +
-            "                 SELECT *,\n" +
-            "         ROW_NUMBER() OVER (PARTITION BY chat_id ORDER BY last_message_ms DESC) AS rn\n" +
-            "    FROM report_data\n" +
-            "         )\n" +
-            "    SELECT *\n" +
-            "    FROM cte\n" +
-            "    WHERE rn = 1")
+    @Scheduled(cron = "* 30 21 * * *")
     public void checkResults() {
-        var nowTime = new Date().getTime();
         var twoDay = 172800000;
-        reportRepository.findAll().stream()
-                .filter(i -> i.getLastMessageMs() + twoDay < nowTime)
+        var nowTime = new Date().getTime() - twoDay;
+        var getDistinct = reportRepository.findAll().stream()
+                .sorted(Comparator.comparing(ReportData::getChatId))
+                .max(Comparator.comparing(ReportData::getLastMessageMs));
+        getDistinct.stream()
+                .filter(i -> i.getLastMessageMs()*1000< nowTime)
                 .forEach(s -> sendMessage(s.getChatId(), "Вы забыли прислать отчет"));
-        System.out.println("111");
-        System.out.println(nowTime);
     }
 }
