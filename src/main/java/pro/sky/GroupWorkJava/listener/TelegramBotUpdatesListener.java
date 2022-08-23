@@ -135,7 +135,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     long numberOfDay = lastDateSendMessage.getDate();
 
                     if (daysOfReports < 30 ) {
-                        if (1<2) { //compareTime != numberOfDay
+                        if (compareTime != numberOfDay) {
                             //Обработка отчета ( Фото и текст)
                             if (update.message() != null && update.message().photo() != null && update.message().caption() != null) {
                                 getReport(update);
