@@ -32,14 +32,14 @@ public class ReportDataService {
     }
 
     public void uploadReportData(Long personId, byte[] pictureFile, File file, String ration, String health,
-                                 String habits, String filePath, Date dateSendMessage, Long timeDate, int daysOfReports) throws IOException {
+                                 String habits, String filePath, Date dateSendMessage, Long timeDate, long daysOfReports) throws IOException {
         logger.info("Was invoked method to uploadReportData");
-        ReportData report = findById(personId);
+        ReportData report = new ReportData();
         report.setLastMessage(dateSendMessage);
         report.setDays(daysOfReports);
         report.setFilePath(filePath);
         report.setFileSize(file.fileSize());
-        report.setLastMessageMS(timeDate);
+        report.setLastMessageMs(timeDate);
         report.setChatId(personId);
         report.setData(pictureFile);
         report.setRation(ration);
@@ -49,9 +49,9 @@ public class ReportDataService {
     }
 
     public void uploadReportData(Long personId, byte[] pictureFile, File file,
-                                 String caption, String filePath, Date dateSendMessage, Long timeDate, int daysOfReports) throws IOException {
+                                 String caption, String filePath, Date dateSendMessage, Long timeDate, long daysOfReports) throws IOException {
         logger.info("Was invoked method to uploadReportData");
-        ReportData report = findById(personId);
+        ReportData report = new ReportData();//findById(personId);
         report.setLastMessage(dateSendMessage);
         report.setDays(daysOfReports);
         report.setFilePath(filePath);
@@ -59,7 +59,7 @@ public class ReportDataService {
         report.setFileSize(file.fileSize());
         report.setData(pictureFile);
         report.setCaption(caption);
-        report.setLastMessageMS(timeDate);
+        report.setLastMessageMs(timeDate);
         reportRepository.save(report);
     }
 

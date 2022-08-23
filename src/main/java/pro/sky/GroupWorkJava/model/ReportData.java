@@ -11,7 +11,6 @@ public class ReportData {
     @GeneratedValue
     private long id;
 
-//    private static int daysOfReport = 1;
     private Long chatId;
 
     private String ration;
@@ -20,7 +19,7 @@ public class ReportData {
 
     private String habits;
 
-    private Integer days = 1;
+    private long days;
 
     private String filePath;
 
@@ -29,16 +28,11 @@ public class ReportData {
     @Lob
     private byte[] data;
 
-    @OneToOne
-    private PersonDog personDog;
-
     private String caption;
 
     private Date lastMessage;
 
-    private Long lastMessageMS;
-
-    private boolean checkReport = true;
+    private Long lastMessageMs;
 
     public ReportData() {
 
@@ -64,20 +58,12 @@ public class ReportData {
         this.habits = habits;
     }
 
-    public boolean isCheckReport() {
-        return checkReport;
+    public Long getLastMessageMs() {
+        return lastMessageMs;
     }
 
-    public void setCheckReport(boolean checkReport) {
-        checkReport = checkReport;
-    }
-
-    public Long getLastMessageMS() {
-        return lastMessageMS;
-    }
-
-    public void setLastMessageMS(Long lastMessageMs) {
-        this.lastMessageMS = lastMessageMs;
+    public void setLastMessageMs(Long lastMessageMs) {
+        this.lastMessageMs = lastMessageMs;
     }
 
     public Date getLastMessage() {
@@ -164,13 +150,12 @@ public class ReportData {
         this.habits = habits;
     }
 
-    public Integer getDays() {
+    public long getDays() {
         return days;
     }
 
-    public void setDays(Integer days) {
+    public void setDays(Long days) {
         this.days = days;
-//        daysOfReport++;
     }
 
     @Override
@@ -185,7 +170,6 @@ public class ReportData {
                 ", filePath='" + filePath + '\'' +
                 ", fileSize=" + fileSize +
                 ", data=" + Arrays.toString(data) +
-                ", person=" + personDog +
                 '}';
     }
 }
