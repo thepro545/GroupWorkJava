@@ -1,6 +1,5 @@
 package pro.sky.GroupWorkJava.controller;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.GroupWorkJava.model.Dog;
 import pro.sky.GroupWorkJava.service.DogService;
@@ -27,13 +26,18 @@ public class DogController {
         return service.create(dog);
     }
 
+    @PutMapping()
+    public Dog update(@RequestBody Dog dog) {
+        return service.update(dog);
+    }
+
     @DeleteMapping("{id}")
     public void remove(@PathVariable Long id) {
         service.removeById(id);
     }
 
-    @GetMapping("getAll")
-    public ResponseEntity<Collection<Dog>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    @GetMapping("all")
+    public Collection<Dog> getAll() {
+        return service.getAll();
     }
 }

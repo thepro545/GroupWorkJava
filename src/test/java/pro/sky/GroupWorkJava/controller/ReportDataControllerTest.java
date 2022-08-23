@@ -26,7 +26,6 @@ class ReportDataControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    @Qualifier("reportDataService")
     private ReportDataService reportDataService;
 
     @Test
@@ -39,7 +38,7 @@ class ReportDataControllerTest {
         when(reportDataService.findById(anyLong())).thenReturn(reportData);
 
         mockMvc.perform(
-                        get("/photoReports/{id}/check", 1L))
+                        get("/photoReports/{id}/report", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.health").value(health))
                 .andExpect(jsonPath("$.ration").value(ration));
