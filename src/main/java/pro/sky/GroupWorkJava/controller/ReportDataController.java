@@ -1,10 +1,12 @@
 package pro.sky.GroupWorkJava.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pro.sky.GroupWorkJava.listener.TelegramBotUpdatesListener;
 import pro.sky.GroupWorkJava.model.ReportData;
 import pro.sky.GroupWorkJava.service.ReportDataService;
 
@@ -25,6 +27,8 @@ import java.util.Collection;
 public class ReportDataController {
 
     private final ReportDataService reportDataService;
+    @Autowired
+    private TelegramBotUpdatesListener telegramBotUpdatesListener;
 
     private final String fileType = "image/jpeg";
 
@@ -71,4 +75,11 @@ public class ReportDataController {
             is.transferTo(os);
         }
     }
+
+    @GetMapping("message-to-person")
+    public void sendMessageToPerson(@RequestParam Long chatId,
+                                    @RequestParam String message) {
+        telegramBotUpdatesListener.sendMessage(chatId, message);
+    }
+
 }
