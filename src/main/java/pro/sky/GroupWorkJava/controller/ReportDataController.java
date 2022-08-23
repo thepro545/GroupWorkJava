@@ -1,5 +1,7 @@
 package pro.sky.GroupWorkJava.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,21 +38,25 @@ public class ReportDataController {
         this.reportDataService = reportDataService;
     }
 
+    @Operation(summary = "Просмотр отчетов по id")
     @GetMapping("/{id}/report")
     public ReportData downloadReport(@PathVariable Long id) {
         return reportDataService.findById(id);
     }
 
+    @Operation(summary = "Удаление отчетов по id")
     @DeleteMapping("/{id}")
     public void remove(@PathVariable Long id) {
         reportDataService.remove(id);
     }
 
+    @Operation(summary = "Просмотр всех отчетов", description = "Просмотр всех отчетов, либо всех отчетов определенного пользователя по chat_id")
     @GetMapping("getAll")
     public ResponseEntity<Collection<ReportData>> getAll() {
         return ResponseEntity.ok(reportDataService.getAll());
     }
 
+    @Operation(summary = "Просмотр фото по айди отчета")
     @GetMapping("/{id}/photo-from-db")
     public ResponseEntity<byte[]> downloadPhotoFromDB(@PathVariable Long id) {
         ReportData reportData = reportDataService.findById(id);
@@ -62,24 +68,14 @@ public class ReportDataController {
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(reportData.getData());
     }
 
-    @GetMapping("/{id}/photo-from-file")
-    public void downloadPhotoFromFile(@PathVariable Long id, HttpServletResponse response) throws IOException {
-        ReportData reportData = reportDataService.findById(id);
-        Path path = Path.of(reportData.getFilePath());
-
-        try (InputStream is = Files.newInputStream(path);
-             OutputStream os = response.getOutputStream()) {
-            response.setStatus(200);
-            response.setContentType(fileType);
-            response.setContentLength((int) reportData.getFileSize());
-            is.transferTo(os);
-        }
-    }
-
+    @Operation(summary = "Отправить сообщение пользователю", description = "Тут можно написать любое сообщение определенному пользователю." +
+            "Например сообщение о том, чтобы правильно заполнял форму отчета. Либо связался с волонтерами по номеру")
     @GetMapping("message-to-person")
-    public void sendMessageToPerson(@RequestParam Long chatId,
+    public void sendMessageToPerson(@Parameter(description = "айди чата с пользователем", example = "3984892310")
+                                    @RequestParam Long chat_Id,
+                                    @Parameter(description = "Ваше сообщение")
                                     @RequestParam String message) {
-        telegramBotUpdatesListener.sendMessage(chatId, message);
+        telegramBotUpdatesListener.sendMessage(chat_Id, message);
     }
 
 }

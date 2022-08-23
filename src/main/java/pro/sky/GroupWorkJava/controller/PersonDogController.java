@@ -1,5 +1,6 @@
 package pro.sky.GroupWorkJava.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.GroupWorkJava.model.PersonDog;
 import pro.sky.GroupWorkJava.service.PersonDogService;
@@ -16,26 +17,31 @@ public class PersonDogController {
         this.service = service;
     }
 
+    @Operation(summary = "Получение пользователя по id")
     @GetMapping("{id}")
     public PersonDog getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
+    @Operation(summary = "Создание пользователя")
     @PostMapping
     public PersonDog save(@RequestBody PersonDog personDog) {
         return service.create(personDog);
     }
 
+    @Operation(summary = "Изменение данных пользователя")
     @PutMapping
     public PersonDog update(@RequestBody PersonDog personDog) {
         return service.update(personDog);
     }
 
+    @Operation(summary = "Удаление пользователей по id")
     @DeleteMapping("{id}")
     public void remove(@PathVariable Long id) {
         service.removeById(id);
     }
 
+    @Operation(summary = "Просмотр всех пользователей", description = "Просмотр всех пользователей, либо определенного пользователя по chat_id")
     @GetMapping("all")
     public Collection<PersonDog> getAll(@RequestParam(required = false) Long chatId) {
         if (chatId != null) {
