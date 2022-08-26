@@ -1,15 +1,11 @@
 package pro.sky.GroupWorkJava.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
-
 public class ReportData {
     @Id
     @GeneratedValue
@@ -23,7 +19,7 @@ public class ReportData {
 
     private String habits;
 
-    private Integer days;
+    private long days;
 
     private String filePath;
 
@@ -32,12 +28,11 @@ public class ReportData {
     @Lob
     private byte[] data;
 
-    @OneToOne
-    private Person person;
-
     private String caption;
 
     private Date lastMessage;
+
+    private Long lastMessageMs;
 
     public ReportData() {
 
@@ -63,6 +58,13 @@ public class ReportData {
         this.habits = habits;
     }
 
+    public Long getLastMessageMs() {
+        return lastMessageMs;
+    }
+
+    public void setLastMessageMs(Long lastMessageMs) {
+        this.lastMessageMs = lastMessageMs;
+    }
 
     public Date getLastMessage() {
         return lastMessage;
@@ -111,7 +113,6 @@ public class ReportData {
         this.data = data;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -149,11 +150,11 @@ public class ReportData {
         this.habits = habits;
     }
 
-    public Integer getDays() {
+    public long getDays() {
         return days;
     }
 
-    public void setDays(Integer days) {
+    public void setDays(Long days) {
         this.days = days;
     }
 
@@ -169,7 +170,6 @@ public class ReportData {
                 ", filePath='" + filePath + '\'' +
                 ", fileSize=" + fileSize +
                 ", data=" + Arrays.toString(data) +
-                ", person=" + person +
                 '}';
     }
 }

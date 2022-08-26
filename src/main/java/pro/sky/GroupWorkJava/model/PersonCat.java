@@ -5,12 +5,15 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * @author Maxon4ik
+ * @date 18.08.2022 20:19
+ */
 @Entity
-
-public class Person {
+public class PersonCat {
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     private String name;
     private int yearOfBirth;
     private String phone;
@@ -19,14 +22,16 @@ public class Person {
 
     private Long chatId;
 
+    private Status status;
+
     @JsonBackReference
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dog_id")
-    private Dog dog;
+    @JoinColumn(name = "cat_id")
+    private Cat cat;
 
     @OneToOne(orphanRemoval = true)
-    @JoinTable(name = "person_report_data",
-            joinColumns = @JoinColumn(name = "person_null"),
+    @JoinTable(name = "person_cat_report_data",
+            joinColumns = @JoinColumn(name = "person_cat_null"),
             inverseJoinColumns = @JoinColumn(name = "report_data_id"))
     private ReportData reportData;
 
@@ -38,16 +43,17 @@ public class Person {
         this.reportData = reportData;
     }
 
-    public Person() {
+    public PersonCat() {
     }
 
-    public Person(String name, String phone, Long chatId) {
+    public PersonCat(String name, String phone, Long chatId) {
         this.name = name;
         this.phone = phone;
         this.chatId = chatId;
     }
 
-    public Person(String name, int yearOfBirth, String phone, String mail, String address, Long chatId) {
+    public PersonCat(Long id, String name, int yearOfBirth, String phone, String mail, String address, Long chatId) {
+        this.id = id;
         this.name = name;
         this.yearOfBirth = yearOfBirth;
         this.phone = phone;
@@ -61,8 +67,8 @@ public class Person {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return id == person.id && yearOfBirth == person.yearOfBirth && phone == person.phone && Objects.equals(name, person.name) && Objects.equals(mail, person.mail) && Objects.equals(address, person.address);
+        PersonCat personCat = (PersonCat) o;
+        return id == personCat.id && yearOfBirth == personCat.yearOfBirth && phone == personCat.phone && Objects.equals(name, personCat.name) && Objects.equals(mail, personCat.mail) && Objects.equals(address, personCat.address);
     }
 
     @Override
@@ -76,11 +82,30 @@ public class Person {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", yearOfBirth=" + yearOfBirth +
-                ", phone=" + phone +
+                ", phone='" + phone + '\'' +
                 ", mail='" + mail + '\'' +
                 ", address='" + address + '\'' +
-                ", dog=" + dog +
+                ", chatId=" + chatId +
+                ", status=" + status +
+                ", cat=" + cat +
+                ", reportData=" + reportData +
                 '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public String getName() {
