@@ -117,8 +117,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String nameUser = update.message().chat().firstName();
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
-//            String emoji_cat = EmojiParser.parseToUnicode(":cat:");
-//            String emoji_dog = EmojiParser.parseToUnicode(":dog:");
+//            String emoji_cat = EmojiParser.parseToUnicode("🐱");
+//            String emoji_dog = EmojiParser.parseToUnicode("🐶");
             long chatId = update.message().chat().id();
             Calendar calendar = new GregorianCalendar();
             daysOfReports = reportRepository.findAll().stream()
@@ -154,8 +154,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         getReport(update);
                     }
                 }
+                if (update.message() != null && update.message().photo() != null && update.message().caption() == null) {
+                    sendMessage(chatId, "Отчет нужно присылать с описанием!");
+                }
 
-                // Добавление имени и телефона в базу через кнопку оставить контакты
+                    // Добавление имени и телефона в базу через кнопку оставить контакты
                 if (update.message() != null && update.message().contact() != null) {
                     shareContact(update);
                 }
@@ -356,15 +359,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     }
 
+
     @Scheduled(cron = "* 30 21 * * *")
     public void checkResults() {
-        var twoDay = 172800000;
-        var nowTime = new Date().getTime() - twoDay;
-        var getDistinct = reportRepository.findAll().stream()
-                .sorted(Comparator.comparing(ReportData::getChatId))
-                .max(Comparator.comparing(ReportData::getLastMessageMs));
-        getDistinct.stream()
-                .filter(i -> i.getLastMessageMs()*1000< nowTime)
-                .forEach(s -> sendMessage(s.getChatId(), "Вы забыли прислать отчет"));
+        if (daysOfReports < 30) {
+            var twoDay = 172800000;
+            var nowTime = new Date().getTime() - twoDay;
+            var getDistinct = reportRepository.findAll().stream()
+                    .sorted(Comparator.comparing(ReportData::getChatId))
+                    .max(Comparator.comparing(ReportData::getLastMessageMs));
+            getDistinct.stream()
+                    .filter(i -> i.getLastMessageMs() * 1000 < nowTime)
+                    .forEach(s -> sendMessage(s.getChatId(), "Вы забыли прислать отчет"));
+        }
     }
 }
