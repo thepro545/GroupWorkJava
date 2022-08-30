@@ -154,8 +154,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         getReport(update);
                     }
                 }
+                if (update.message() != null && update.message().photo() != null && update.message().caption() == null) {
+                    sendMessage(chatId, "Отчет нужно присылать с описанием!");
+                }
 
-                // Добавление имени и телефона в базу через кнопку оставить контакты
+                    // Добавление имени и телефона в базу через кнопку оставить контакты
                 if (update.message() != null && update.message().contact() != null) {
                     shareContact(update);
                 }
@@ -235,7 +238,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         break;
                 }
             } catch (NullPointerException e) {
-//                sendReplyMessage(chatId, "Ошибка. Я не понимаю это сообщение", messageId);
                 System.out.println("Ошибка");
             }
 
@@ -254,10 +256,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         ForwardMessage forwardMessage = new ForwardMessage(telegramChatVolunteers, chatId, messageId);
         telegramBot.execute(forwardMessage);
     }
-
-//    public void sendMessage(NotificationTask task) {
-//        sendMessage(task.getChatId(), task.getNotificationMessage());
-//    }
 
     //отправка сообщений в ТГ Бот
     public void sendMessage(long chatId, String text) {
@@ -356,15 +354,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     }
 
+
     @Scheduled(cron = "* 30 21 * * *")
     public void checkResults() {
-        var twoDay = 172800000;
-        var nowTime = new Date().getTime() - twoDay;
-        var getDistinct = reportRepository.findAll().stream()
-                .sorted(Comparator.comparing(ReportData::getChatId))
-                .max(Comparator.comparing(ReportData::getLastMessageMs));
-        getDistinct.stream()
-                .filter(i -> i.getLastMessageMs()*1000< nowTime)
-                .forEach(s -> sendMessage(s.getChatId(), "Вы забыли прислать отчет"));
+        if (daysOfReports < 30) {
+            var twoDay = 172800000;
+            var nowTime = new Date().getTime() - twoDay;
+            var getDistinct = reportRepository.findAll().stream()
+                    .sorted(Comparator.comparing(ReportData::getChatId))
+                    .max(Comparator.comparing(ReportData::getLastMessageMs));
+            getDistinct.stream()
+                    .filter(i -> i.getLastMessageMs() * 1000 < nowTime)
+                    .forEach(s -> sendMessage(s.getChatId(), "Вы забыли прислать отчет"));
+        }
+
     }
 }
