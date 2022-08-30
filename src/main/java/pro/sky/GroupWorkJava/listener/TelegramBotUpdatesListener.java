@@ -117,8 +117,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String nameUser = update.message().chat().firstName();
             String textUpdate = update.message().text();
             Integer messageId = update.message().messageId();
-//            String emoji_cat = EmojiParser.parseToUnicode("🐱");
-//            String emoji_dog = EmojiParser.parseToUnicode("🐶");
+//            String emoji_cat = EmojiParser.parseToUnicode(":cat:");
+//            String emoji_dog = EmojiParser.parseToUnicode(":dog:");
             long chatId = update.message().chat().id();
             Calendar calendar = new GregorianCalendar();
             daysOfReports = reportRepository.findAll().stream()
@@ -238,7 +238,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         break;
                 }
             } catch (NullPointerException e) {
-//                sendReplyMessage(chatId, "Ошибка. Я не понимаю это сообщение", messageId);
                 System.out.println("Ошибка");
             }
 
@@ -257,10 +256,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         ForwardMessage forwardMessage = new ForwardMessage(telegramChatVolunteers, chatId, messageId);
         telegramBot.execute(forwardMessage);
     }
-
-//    public void sendMessage(NotificationTask task) {
-//        sendMessage(task.getChatId(), task.getNotificationMessage());
-//    }
 
     //отправка сообщений в ТГ Бот
     public void sendMessage(long chatId, String text) {
@@ -372,5 +367,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     .filter(i -> i.getLastMessageMs() * 1000 < nowTime)
                     .forEach(s -> sendMessage(s.getChatId(), "Вы забыли прислать отчет"));
         }
+
     }
 }
